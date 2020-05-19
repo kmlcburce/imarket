@@ -1,0 +1,26 @@
+{
+    "name": "increment/cart",
+    "description": "Increment Core Marketplace Backend",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "kennCK",
+            "email": "kennettecanales@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Increment\\IMarket\\Cart": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Increment\\IMarket\\Cart\\CartServiceProvider"
+            ]
+        }
+    }
+}
