@@ -1,10 +1,10 @@
 <?php
 
-namespace Increment\Marketplace\Models;
+namespace Increment\IMarket\Merchant\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\APIModel;
 class Merchant extends APIModel
 {
     protected $table = 'merchants';
-    protected $fillable = ['cpde', 'account_id', 'name', 'prefix', 'logo', 'address', 'status'];
+    protected $fillable = ['code', 'account_id', 'name', 'prefix', 'logo', 'address', 'status'];
 }

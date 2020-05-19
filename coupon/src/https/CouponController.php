@@ -1,10 +1,10 @@
 <?php
 
-namespace Increment\Marketplace\Http;
+namespace Increment\IMarket\Coupon\Http;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
-use Increment\Marketplace\Models\Coupon;
+use Increment\IMarket\Coupon\Models\Coupon;
 class CouponController extends APIController
 {
    	function __construct(){

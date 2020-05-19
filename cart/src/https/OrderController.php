@@ -1,11 +1,11 @@
 <?php
 
-namespace Increment\Marketplace\Http;
+namespace Increment\IMarket\Cart\Http;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
-use Increment\Marketplace\Models\Checkout;
-use Increment\Marketplace\Models\CheckoutItem;
+use Increment\IMarket\Cart\Models\Checkout;
+use Increment\IMarket\Cart\Models\CheckoutItem;
 class OrderController extends APIController
 {
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Increment\Marketplace\Models;
+namespace Increment\IMarket\Coupon\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\APIModel;
 use Carbon\Carbon;

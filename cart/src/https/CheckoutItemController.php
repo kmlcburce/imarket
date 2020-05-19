@@ -1,16 +1,16 @@
 <?php
 
-namespace Increment\Marketplace\Http;
+namespace Increment\IMarket\Cart\Http;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
-use Increment\Marketplace\Models\CheckoutItem;
-use Increment\Marketplace\Models\Checkout;
+use Increment\IMarket\Cart\Models\CheckoutItem;
+use Increment\IMarket\Cart\Models\Checkout;
 use App\CheckoutTemplate;
 use Carbon\Carbon;
 class CheckoutItemController extends APIController
 {
-    public $merchantClass = 'Increment\Marketplace\Http\MerchantController';
+    public $merchantClass = 'Increment\IMarket\Merchant\Http\MerchantController';
     function __construct(){
     	$this->model = new CheckoutItem();
 

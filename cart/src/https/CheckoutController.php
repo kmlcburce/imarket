@@ -1,14 +1,14 @@
 <?php
 
-namespace Increment\Marketplace\Http;
+namespace Increment\IMarket\Cart\Http;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
-use Increment\Marketplace\Models\Checkout;
-use Increment\Marketplace\Models\CheckoutItem;
-use Increment\Marketplace\Models\Product;
-use Increment\Marketplace\Models\Pricing;
-use Increment\Marketplace\Models\StripeWebhook;
+use Increment\IMarket\Cart\Models\Checkout;
+use Increment\IMarket\Cart\Models\CheckoutItem;
+use Increment\IMarket\Product\Models\Product;
+use Increment\IMarket\Product\Models\Pricing;
+use Increment\IMarket\Payment\Models\StripeWebhook;
 use Carbon\Carbon;
 class CheckoutController extends APIController
 {
@@ -16,7 +16,7 @@ class CheckoutController extends APIController
   protected $total = 0;
   protected $tax = 0;
 
-  public $shippingAddressClass = 'Increment\Marketplace\Http\ShippingAddressController';
+  public $shippingAddressClass = 'Increment\IMarket\Shipping\Http\ShippingAddressController';
   function __construct(){
   	$this->model = new Checkout();
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace Increment\IMarket\Cart;
+namespace Increment\IMarket\Bundled;
 
 use Illuminate\Support\ServiceProvider;
 
-class CartServiceProvider extends ServiceProvider{
+class BundledServiceProvider extends ServiceProvider{
 
   public function boot(){
     $this->loadMigrationsFrom(__DIR__.'/migrations');

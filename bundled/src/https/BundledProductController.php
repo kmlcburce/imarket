@@ -1,17 +1,17 @@
 <?php
 
 
-namespace Increment\Marketplace\Http;
+namespace Increment\IMarket\Bundled\Http;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
-use Increment\Marketplace\Models\BundledProduct;
+use Increment\IMarket\Bundled\Models\BundledProduct;
 use Carbon\Carbon;
 class BundledProductController extends APIController
 {
   
-  public $productTraceController = 'Increment\Marketplace\Http\ProductTraceController';
-  public $transferredProductClass = 'Increment\Marketplace\Http\TransferredProductController';
+  public $productTraceController = 'Increment\IMarket\Bundled\Http\ProductTraceController';
+  public $transferredProductClass = 'Increment\IMarket\Bundled\Http\TransferredProductController';
   
   function __construct(){
     $this->model = new BundledProduct();
