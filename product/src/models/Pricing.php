@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Increment\Marketplace\Models;
+namespace Increment\IMarket\Product\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\APIModel;
 class Pricing extends APIModel

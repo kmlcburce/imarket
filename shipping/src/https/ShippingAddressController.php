@@ -1,10 +1,10 @@
 <?php
 
-namespace Increment\Marketplace\Http;
+namespace Increment\IMarket\Shipping;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
-use Increment\Marketplace\Models\ShippingAddress;
+use Increment\IMarket\Shipping\Models\ShippingAddress;
 class ShippingAddressController extends APIController
 {
 

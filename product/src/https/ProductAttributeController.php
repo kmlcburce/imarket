@@ -1,10 +1,10 @@
 <?php
 
-namespace Increment\Marketplace\Http;
+namespace Increment\IMarket\Product\Http;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
-use Increment\Marketplace\Models\ProductAttribute;
+use Increment\IMarket\Product\Models\ProductAttribute;
 class ProductAttributeController extends APIController
 {
     function __construct(){

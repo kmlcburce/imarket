@@ -1,5 +1,5 @@
 {
-    "name": "increment/cart",
+    "name": "increment/shipping",
     "description": "Increment Core Marketplace Backend",
     "type": "library",
     "license": "MIT",
@@ -13,13 +13,13 @@
     "require": {},
     "autoload": {
         "psr-4": {
-            "Increment\\IMarket\\Cart": "src/"
+            "Increment\\IMarket\\Shipping": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Increment\\IMarket\\Cart\\CartServiceProvider"
+                "Increment\\IMarket\\Shipping\\ShippingServiceProvider"
             ]
         }
     }

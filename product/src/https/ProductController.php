@@ -1,24 +1,24 @@
 <?php
 
-namespace Increment\Marketplace\Http;
+namespace Increment\IMarket\Product\Http;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
-use Increment\Marketplace\Models\Product;
+use Increment\IMarket\Product\Models\Product;
 use Carbon\Carbon;
 class ProductController extends APIController
 {
-    public $productImageController = 'Increment\Marketplace\Http\ProductImageController';
-    public $productAttrController = 'Increment\Marketplace\Http\ProductAttributeController';
-    public $productPricingController = 'Increment\Marketplace\Http\PricingController';
-    public $wishlistController = 'Increment\Marketplace\Http\WishlistController';
-    public $checkoutController = 'Increment\Marketplace\Http\CheckoutController';
-    public $checkoutItemController = 'Increment\Marketplace\Http\CheckoutItemController';
-    public $inventoryController = 'Increment\Marketplace\Http\ProductInventoryController';
-    public $productTraceController = 'Increment\Marketplace\Http\ProductTraceController';
-    public $merchantController = 'Increment\Marketplace\Http\MerchantController';
-    public $bundledProductController = 'Increment\Marketplace\Http\BundledProductController';
-    public $bundledSettingController = 'Increment\Marketplace\Http\BundledSettingController';
+    public $productImageController = 'Increment\IMarket\Product\Http\ProductImageController';
+    public $productAttrController = 'Increment\IMarket\Product\Http\ProductAttributeController';
+    public $productPricingController = 'Increment\IMarket\Product\Http\PricingController';
+    public $wishlistController = 'Increment\IMarket\Wishlist\Http\WishlistController';
+    public $checkoutController = 'Increment\IMarket\Cart\Http\CheckoutController';
+    public $checkoutItemController = 'Increment\IMarket\Cart\Http\CheckoutItemController';
+    public $inventoryController = 'Increment\IMarket\Product\Http\ProductInventoryController';
+    public $productTraceController = 'Increment\IMarket\Trace\Http\ProductTraceController';
+    public $merchantController = 'Increment\IMarket\Merchant\Http\MerchantController';
+    public $bundledProductController = 'Increment\IMarket\Bundled\Http\BundledProductController';
+    public $bundledSettingController = 'Increment\IMarket\Bundled\Http\BundledSettingController';
     function __construct(){
     	$this->model = new Product();
       $this->notRequired = array(
