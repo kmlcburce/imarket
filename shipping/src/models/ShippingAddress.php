@@ -1,6 +1,6 @@
 <?php
 
-namespace Increment\IMarket\Shipping\Models;
+namespace Increment\Imarket\Shipping\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\APIModel;
 class ShippingAddress extends APIModel

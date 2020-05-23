@@ -13,13 +13,13 @@
     "require": {},
     "autoload": {
         "psr-4": {
-            "Increment\\IMarket\\Bundled": "src/"
+            "Increment\\Imarket\\Bundled": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Increment\\IMarket\\Bundled\\BundledServiceProvider"
+                "Increment\\Imarket\\Bundled\\BundledServiceProvider"
             ]
         }
     }

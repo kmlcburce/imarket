@@ -1,6 +1,6 @@
 <?php
 
-namespace Increment\IMarket\Bundled;
+namespace Increment\Imarket\Bundled;
 
 use Illuminate\Support\ServiceProvider;
 

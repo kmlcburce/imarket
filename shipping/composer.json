@@ -13,13 +13,13 @@
     "require": {},
     "autoload": {
         "psr-4": {
-            "Increment\\IMarket\\Shipping": "src/"
+            "Increment\\Imarket\\Shipping": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Increment\\IMarket\\Shipping\\ShippingServiceProvider"
+                "Increment\\Imarket\\Shipping\\ShippingServiceProvider"
             ]
         }
     }

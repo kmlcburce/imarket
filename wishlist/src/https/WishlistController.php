@@ -1,10 +1,10 @@
 <?php
 
-namespace Increment\IMarket\Wishlist\Http;
+namespace Increment\Imarket\Wishlist\Http;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
-use Increment\IMarket\Wishlist\Models\Wishlist;
+use Increment\Imarket\Wishlist\Models\Wishlist;
 
 class WishlistController extends APIController
 {
@@ -23,7 +23,7 @@ class WishlistController extends APIController
     		foreach ($result as $key) {
     			$payloadValue = $result[$i]['payload_value'];
     			if($result[$i]['payload'] == 'product'){
-    				$this->response['data'][$i]['product'] = app('Increment\IMarket\Product\Http\ProductController')->retrieveProductById($payloadValue, $accountId);
+    				$this->response['data'][$i]['product'] = app('Increment\Imarket\Product\Http\ProductController')->retrieveProductById($payloadValue, $accountId);
     			}
     			$i++;
     		}

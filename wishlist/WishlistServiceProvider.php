@@ -1,6 +1,6 @@
 <?php
 
-namespace Increment\IMarket\Wishlist;
+namespace Increment\Imarket\Wishlist;
 
 use Illuminate\Support\ServiceProvider;
 

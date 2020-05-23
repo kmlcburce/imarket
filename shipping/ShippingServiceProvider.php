@@ -1,6 +1,6 @@
 <?php
 
-namespace Increment\IMarket\Shipping;
+namespace Increment\Imarket\Shipping;
 
 use Illuminate\Support\ServiceProvider;
 

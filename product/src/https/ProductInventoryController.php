@@ -1,11 +1,11 @@
 <?php
 
 
-namespace Increment\IMarket\Product\Http;
+namespace Increment\Imarket\Product\Http;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
-use Increment\IMarket\Product\Models\ProductInventory;
+use Increment\Imarket\Product\Models\ProductInventory;
 use Carbon\Carbon;
 class ProductInventoryController extends APIController
 {

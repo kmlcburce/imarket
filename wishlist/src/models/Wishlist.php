@@ -1,6 +1,6 @@
 <?php
 
-namespace Increment\IMarket\Wishlist\Models;
+namespace Increment\Imarket\Wishlist\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\APIModel;
 class Wishlist extends APIModel

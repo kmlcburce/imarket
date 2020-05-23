@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Increment\IMarket\Bundled\Models;
+namespace Increment\Imarket\Bundled\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\APIModel;
 class BundledSetting extends APIModel

@@ -1,6 +1,6 @@
 <?php
 
-namespace Increment\IMarket\Cart;
+namespace Increment\Imarket\Cart;
 
 use Illuminate\Support\ServiceProvider;
 

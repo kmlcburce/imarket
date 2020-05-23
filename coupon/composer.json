@@ -13,13 +13,13 @@
     "require": {},
     "autoload": {
         "psr-4": {
-            "Increment\\IMarket\\Coupon": "src/"
+            "Increment\\Imarket\\Coupon": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Increment\\IMarket\\Coupon\\CouponServiceProvider"
+                "Increment\\Imarket\\Coupon\\CouponServiceProvider"
             ]
         }
     }

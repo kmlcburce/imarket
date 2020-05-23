@@ -1,6 +1,6 @@
 <?php
 
-namespace Increment\IMarket\Product;
+namespace Increment\Imarket\Product;
 
 use Illuminate\Support\ServiceProvider;
 

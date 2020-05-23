@@ -1,6 +1,6 @@
 <?php
 
-namespace Increment\IMarket\Coupon;
+namespace Increment\Imarket\Coupon;
 
 use Illuminate\Support\ServiceProvider;
 

@@ -1,12 +1,12 @@
 <?php
 
 
-namespace Increment\IMarket\Product\Http;
+namespace Increment\Imarket\Product\Http;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
-use Increment\IMarket\Product\Models\Pricing;
-use Increment\IMarket\Product\Models\Product;
+use Increment\Imarket\Product\Models\Pricing;
+use Increment\Imarket\Product\Models\Product;
 class PricingController extends APIController
 {
     function __construct(){

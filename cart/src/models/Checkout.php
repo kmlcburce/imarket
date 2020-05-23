@@ -1,6 +1,6 @@
 <?php
 
-namespace Increment\IMarket\Cart\Models;
+namespace Increment\Imarket\Cart\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\APIModel;
 class Checkout extends APIModel

@@ -13,13 +13,13 @@
     "require": {},
     "autoload": {
         "psr-4": {
-            "Increment\\IMarket\\Wishlist": "src/"
+            "Increment\\Imarket\\Wishlist": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Increment\\IMarket\\Wishlist\\WishlistServiceProvider"
+                "Increment\\Imarket\\Wishlist\\WishlistServiceProvider"
             ]
         }
     }

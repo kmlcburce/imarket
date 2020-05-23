@@ -1,6 +1,6 @@
 <?php
 
-namespace Increment\IMarket\Product\Models;
+namespace Increment\Imarket\Product\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
