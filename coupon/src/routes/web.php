@@ -2,7 +2,7 @@
 
 // Coupons
 $route = env('PACKAGE_ROUTE', '').'/coupons/';
-$controller = 'Increment\IMarket\Coupon\Http\CouponController@';
+$controller = 'Increment\Imarket\Coupon\Http\CouponController@';
 Route::post($route.'create', $controller."create");
 Route::post($route.'retrieve', $controller."retrieve");
 Route::post($route.'update', $controller."update");

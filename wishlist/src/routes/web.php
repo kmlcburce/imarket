@@ -1,7 +1,7 @@
 <?php
 // Wishlists
 $route = env('PACKAGE_ROUTE', '').'/wishlists/';
-$controller = 'Increment\IMarket\Wishlist\Http\WishlistController@';
+$controller = 'Increment\Imarket\Wishlist\Http\WishlistController@';
 Route::post($route.'create', $controller."create");
 Route::post($route.'retrieve', $controller."retrieve");
 Route::post($route.'update', $controller."update");
