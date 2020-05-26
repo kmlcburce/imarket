@@ -20,7 +20,7 @@ class CreateProductsTable extends Migration
             $table->longText('title');
             $table->longText('description')->nullable();
             $table->longText('tags')->nullable();
-            $table->string('status');
+            $table->string('status')->default('pending');
             $table->timestamps();
             $table->softDeletes();
         });

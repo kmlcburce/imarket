@@ -14,7 +14,6 @@ class UpdateProductsTableAddMerchantRf extends Migration
     public function up()
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->longText('rf')->after('price_settings')->nullable();
             $table->bigInteger('merchant_id')->after('account_id');
         });
     }
