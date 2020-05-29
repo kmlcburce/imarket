@@ -1,6 +1,6 @@
 <?php
 
-namespace Increment\IMarket\Merchant\Models;
+namespace Increment\Imarket\Merchant\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\APIModel;
 class Merchant extends APIModel

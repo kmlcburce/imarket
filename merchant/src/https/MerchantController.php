@@ -1,11 +1,11 @@
 <?php
 
-namespace Increment\IMarket\Merchant\Http;
+namespace Increment\Imarket\Merchant\Http;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
-use Increment\IMarket\Merchant\Models\Merchant;
-use Increment\IMarket\Cart\Models\Checkout;
+use Increment\Imarket\Merchant\Models\Merchant;
+use Increment\Imarket\Cart\Models\Checkout;
 use Carbon\Carbon;
 class MerchantController extends APIController
 {

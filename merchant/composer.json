@@ -19,7 +19,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Increment\\IMarket\\Merchant\\MerchantServiceProvider"
+                "Increment\\Imarket\\Merchant\\MerchantServiceProvider"
             ]
         }
     }

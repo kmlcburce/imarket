@@ -1,6 +1,6 @@
 <?php
 
-namespace Increment\IMarket\Merchant;
+namespace Increment\Imarket\Merchant;
 
 use Illuminate\Support\ServiceProvider;
 
