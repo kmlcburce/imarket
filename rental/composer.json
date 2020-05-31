@@ -1,0 +1,26 @@
+{
+    "name": "increment/rental",
+    "description": "Increment Core Marketplace Backend",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "kennCK",
+            "email": "kennettecanales@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Increment\\Imarket\\Rental": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Increment\\Imarket\\Rental\\RentalServiceProvider"
+            ]
+        }
+    }
+}

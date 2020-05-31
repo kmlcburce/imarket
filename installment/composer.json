@@ -1,0 +1,26 @@
+{
+    "name": "increment/installment",
+    "description": "Increment Core Marketplace Backend",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "kennCK",
+            "email": "kennettecanales@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Increment\\Imarket\\Installment": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Increment\\Imarket\\Installment\\InstallmentServiceProvider"
+            ]
+        }
+    }
+}
