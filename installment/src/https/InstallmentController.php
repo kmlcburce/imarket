@@ -9,5 +9,9 @@ class InstallmentController extends APIController
 {
  	function __construct(){
  		$this->model = new Installment();
+
+    $this->notRequired = array(
+      'product_id', 'merchant_id'
+    );
  	}
 }

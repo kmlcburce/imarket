@@ -15,8 +15,8 @@ class CreateInstallmentsTable extends Migration
     {
         Schema::create('installments', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('product_id');
-            $table->bigInteger('merchant_id');
+            $table->bigInteger('product_id')->nullable();
+            $table->bigInteger('merchant_id')->nullable();
             $table->integer('months');
             $table->double('interest', 8, 2);
             $table->string('requirements')->nullable();
