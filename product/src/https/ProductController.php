@@ -107,6 +107,8 @@ class ProductController extends APIController
           $result[$i]['account'] = $this->retrieveAccountDetails($result[$i]['account_id']);
           $result[$i]['price'] = app($this->productPricingController)->getPrice($result[$i]['id']);
           $result[$i]['variation'] = app($this->productAttrController)->getByParams('product_id', $result[$i]['id']);
+          $result[$i]['color'] = app($this->productAttrController)->getAttribute($result[$i]['id'], 'Color');
+          $result[$i]['size'] = app($this->productAttrController)->getAttribute($result[$i]['id'], 'Size');
           $result[$i]['featured'] = app($this->productImageController)->getProductImage($result[$i]['id'], 'featured');
           $result[$i]['images'] = app($this->productImageController)->getProductImage($result[$i]['id'], null);
           $result[$i]['tag_array'] = $this->manageTags($result[$i]['tags']);
@@ -128,6 +130,10 @@ class ProductController extends APIController
             $qty = app($this->productTraceController)->getBalanceQtyWithInBundled('product_id', $result[$i]['id']);
             $result[$i]['qty'] = $qty['qty'];
             $result[$i]['qty_in_bundled'] = $qty['qty_in_bundled'];
+          }
+          $result[$i]['installment'] = null;
+          if($this->installment == true){
+            $result[$i]['installment'] = app('Increment\Imarket\Installment\Http\InstallmentController')->getByParams('product_id', $result[$i]['id']); 
           }
           $i++;
         }
