@@ -110,6 +110,21 @@ class ProductController extends APIController
       return sizeof($result) > 0 ? $result[0] : null;      
     }
 
+    public function getProductByParamsInstallment($column, $value){
+      $result = Product::where($column, '=', $value)->get();
+      if(sizeof($result) > 0){
+        $i= 0;
+        foreach ($result as $key) {
+          $result[$i]['merchant'] = app($this->merchantController)->getByParams('id', $result[$i]['merchant_id']);
+          $result[$i]['featured'] = app($this->productImageController)->getProductImage($result[$i]['id'], 'featured');
+          $price = app($this->productPricingController)->getPrice($result[$i]['id']);
+          $result[$i]['total'] = $price[0]['price'];
+          $result[$i]['currency'] = $price[0]['currency'];
+        }
+      }
+      return sizeof($result) > 0 ? $result[0] : null;      
+    }
+
     public function manageResultBasic($result, $accountId, $inventoryType){
       if(sizeof($result) > 0){
         $i = 0;
