@@ -9,5 +9,9 @@ class InstallmentRequestController extends APIController
 {
  	function __construct(){
  		$this->model = new InstallmentRequest();
+
+    $this->notRequired = array(
+      'size', 'color'
+    );
  	}
 }

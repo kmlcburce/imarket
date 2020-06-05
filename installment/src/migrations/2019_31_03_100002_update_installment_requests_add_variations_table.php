@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateInstallmentRequestsAddVariationsTable extends Migration
+class UpdateInstallmentRequestsAddVariationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,10 @@ class CreateInstallmentRequestsAddVariationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('installment_requests', function (Blueprint $table) {
+        Schema::table('installment_requests', function (Blueprint $table) {
             $table->string('size')->nullable()->after('product_id');
             $table->string('color')->nullable()->after('size');
             $table->integer('qty')->default(1)->after('color');
-            $table->timestamps();
-            $table->softDeletes();
         });
     }
 
