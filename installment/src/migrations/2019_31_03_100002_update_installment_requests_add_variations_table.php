@@ -14,7 +14,7 @@ class UpdateInstallmentRequestsAddVariationsTable extends Migration
     public function up()
     {
         Schema::table('installment_requests', function (Blueprint $table) {
-            $table->string('size')->nullable()->after('product_id');
+            $table->string('size')->nullable()->after('account_id');
             $table->string('color')->nullable()->after('size');
             $table->integer('qty')->default(1)->after('color');
         });
