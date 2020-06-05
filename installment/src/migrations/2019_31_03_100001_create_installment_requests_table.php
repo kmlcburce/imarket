@@ -17,6 +17,10 @@ class CreateInstallmentRequestsTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('product_id');
             $table->bigInteger('account_id');
+            $table->bigInteger('merchant_id');
+            $table->string('size')->nullable();
+            $table->string('color')->nullable();
+            $table->integer('qty')->default(1);
             $table->string('status')->default('pending');
             $table->timestamps();
             $table->softDeletes();
