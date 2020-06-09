@@ -13,8 +13,13 @@ class ProductExclusiveLocationController extends APIController
     $this->model = new ProductExclusiveLocation();
   }
 
-  public function getByParams($productId, $location){
+  public function getByParamsWithLocation($productId, $location){
     $result = ProductExclusiveLocation::where('product_id', '=', $productId)->where('locality', 'like', $location.'%')->get();
     return sizeof($result) > 0 ? $result[0] : null;
+  }
+
+  public function getByParams($productId){
+    $result = ProductExclusiveLocation::where('product_id', '=', $productId)->get();
+    return sizeof($result) > 0 ? $result : null;
   }
 }
