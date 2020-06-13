@@ -30,11 +30,11 @@ class RentalController extends APIController
       $merchant = app($this->merchantController)->getByParams('id', $data['merchant_id']);
       if($this->response['data'] > 0 && $merchant != null){
         $parameter = array(
-          'to' => $data['to'],
+          'to' => $merchant['account_id'],
           'from' => $data['account_id'],
-          'payload' => 'installment',
+          'payload' => 'rental',
           'payload_value' => $data['code'],
-          'route' => '/installments',
+          'route' => '/rentals',
           'created_at' => Carbon::now()
         );
         app($this->notificationClass)->createByParams($parameter);
