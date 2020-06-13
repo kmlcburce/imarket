@@ -7,5 +7,5 @@ use Carbon\Carbon;
 class Rental extends APIModel
 {
     protected $table = 'rentals';
-    protected $fillable = ['account_id', 'product_id', 'start', 'end', 'status'];
+    protected $fillable = ['code', 'account_id', 'product_id', 'merchant_id', 'start', 'end', 'status'];
 }

@@ -38,7 +38,7 @@ class ProductController extends APIController
 
 
     public function generateCode(){
-      $code = substr(str_shuffle("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 32);
+      $code = 'PRO-'.substr(str_shuffle($this->codeSource), 0, 60);
       $codeExist = Product::where('code', '=', $code)->get();
       if(sizeof($codeExist) > 0){
         $this->generateCode();
@@ -120,6 +120,7 @@ class ProductController extends APIController
           $price = app($this->productPricingController)->getPrice($result[$i]['id']);
           $result[$i]['total'] = $price[0]['price'];
           $result[$i]['currency'] = $price[0]['currency'];
+          $result[$i]['price'] = $price;
         }
       }
       return sizeof($result) > 0 ? $result[0] : null;      

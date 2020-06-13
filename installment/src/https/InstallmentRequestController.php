@@ -10,6 +10,8 @@ class InstallmentRequestController extends APIController
 {
   public $installmentClass = 'Increment\Imarket\Installment\Http\InstallmentController';
   public $productClass = 'Increment\Imarket\Product\Http\ProductController';
+  public $notificationClass = 'Increment\Common\Notification\Http\NotificationController';
+  public $merchantController = 'Increment\Imarket\Merchant\Http\MerchantController';
  	
   function __construct(){
  		$this->model = new InstallmentRequest();
@@ -19,13 +21,46 @@ class InstallmentRequestController extends APIController
     );
  	}
 
+  public function create(Request $request){
+    $data = $request->all();
+    $data['code'] = $this->generateCode();
+    $this->insertDB($data);
+    $merchant = app($this->merchantController)->getByParams('id', $data['merchant_id']);
+    if($this->response['data'] > 0 && $merchant != null){
+      $parameter = array(
+        'to' => $merchant['account_id'],
+        'from' => $data['account_id'],
+        'payload' => 'installment',
+        'payload_value' => $data['code'],
+        'route' => '/installments',
+        'created_at' => Carbon::now()
+      );
+      app($this->notificationClass)->createByParams($parameter);
+    }
+    return $this->response();
+  }
+
+  public function generateCode(){
+    $code = 'INS-'.substr(str_shuffle($this->codeSource), 0, 60);
+    $codeExist = InstallmentRequest::where('code', '=', $code)->get();
+    if(sizeof($codeExist) > 0){
+      $this->generateCode();
+    }else{
+      return $code;
+    }
+  }
+
   public function getByParams($column, $value){
-    $result = InstallmentRequest::where($column, '=', $value)->get();
+    $result = InstallmentRequest::where($column, '=', $value)->orderBy('created_at', 'desc')->get();
 
     if(sizeof($result) > 0){
-      $result[0]['installment'] = app($this->installmentClass)->getByParams('product_id', $result[0]['product_id']);
-      $result[0]['product']     = app($this->productClass)->getProductByParamsInstallment('id', $result[0]['product_id']);
-      $result[0]['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[0]['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y H:i A');
+      $i = 0;
+      foreach ($result as $key => $value) {
+        $result[$i]['installment'] = app($this->installmentClass)->getByParams('product_id', $result[$i]['product_id']);
+        $result[$i]['product']      = app($this->productClass)->getProductByParamsInstallment('id', $result[$i]['product_id']);
+        $result[$i]['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y H:i A');
+        $i++;
+      }
       return $result;
     }
 

@@ -7,5 +7,5 @@ use Carbon\Carbon;
 class InstallmentRequest extends APIModel
 {
     protected $table = 'installment_requests';
-    protected $fillable = ['product_id', 'merchant_id', 'account_id', 'size', 'color', 'qty', 'status'];
+    protected $fillable = ['code', 'product_id', 'merchant_id', 'account_id', 'size', 'color', 'qty', 'status'];
 }
