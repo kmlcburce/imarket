@@ -12,6 +12,7 @@ class InstallmentRequestController extends APIController
   public $productClass = 'Increment\Imarket\Product\Http\ProductController';
   public $notificationClass = 'Increment\Common\Notification\Http\NotificationController';
   public $merchantController = 'Increment\Imarket\Merchant\Http\MerchantController';
+  public $messengerCustom = 'App\Http\Controllers\MessengerGroupController';
  	
   function __construct(){
  		$this->model = new InstallmentRequest();
@@ -52,6 +53,7 @@ class InstallmentRequestController extends APIController
         $result[$i]['account']     = $this->retrieveAccountDetails($result[$i]['account_id']);
         $result[$i]['product']     = app($this->productClass)->getProductByParamsInstallment('id', $result[$i]['product_id']);
         $result[$i]['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y H:i A');
+        $result[$i]['thread']      = app($this->messengerCustom)->getByParamsTwoColumns('payload', 'installment', 'title', $result[$i]['code']);
         $i++;
       }
     }

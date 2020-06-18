@@ -18,6 +18,7 @@ class RentalController extends APIController
     public $merchantController = 'Increment\Imarket\Merchant\Http\MerchantController';
     public $productController = 'Increment\Imarket\Product\Http\ProductController';
     public $notificationClass = 'Increment\Common\Notification\Http\NotificationController';
+    public $messengerCustom = 'App\Http\Controllers\MessengerGroupController';
 
    	function __construct(){
    		$this->model = new Rental();
@@ -54,6 +55,7 @@ class RentalController extends APIController
           $result[$i]['start_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['start'])->copy()->tz($this->response['timezone'])->format('F j, Y H:i A');
           $result[$i]['end_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['end'])->copy()->tz($this->response['timezone'])->format('F j, Y H:i A');
           $result[$i]['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y H:i A');
+          $result[$i]['thread']      = app($this->messengerCustom)->getByParamsTwoColumns('payload', 'rental', 'title', $result[$i]['code']);
           $i++;
         }
       }
