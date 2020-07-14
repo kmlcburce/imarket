@@ -22,7 +22,6 @@ class PricingController extends APIController
     	$result = $this->response['data'];
     	if(sizeof($result) > 0){
     		$i = 0;
-
     		foreach ($result as $key) {
     			$this->response['data'][$i]['product'] = $this->getProduct($result[$i]['product_id']);
     			$i++;
@@ -37,6 +36,7 @@ class PricingController extends APIController
     }
 
     public function getPrice($id){
+	  return $id;
       $result = Pricing::where('product_id', '=', $id)->orderBy('minimum', 'asc')->get();
       return (sizeof($result) > 0) ? $result : null;
     }
