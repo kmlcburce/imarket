@@ -4,7 +4,7 @@ namespace Increment\Imarket\Merchant\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\APIModel;
 
-class MerchantLocation extends APIModel
+class Location extends APIModel
 {
     //
     protected $table = 'merchant_locations';

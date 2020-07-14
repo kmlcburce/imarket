@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateMerchantLocationsTable extends Migration
+class CreateLocationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateMerchantLocationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('merchant_locations', function (Blueprint $table) {
+        Schema::create('locations', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('merchant_id');
-            $table->decimal('latitude',8,6);
-            $table->decimal('longitude',9,6);
+            $table->bigInteger('account_id');
+            $table->string('latitude');
+            $table->string('longitude');
             $table->string('route');
             $table->string('locality');
             $table->string('region');
