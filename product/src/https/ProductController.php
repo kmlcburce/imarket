@@ -53,7 +53,6 @@ class ProductController extends APIController
       $accountId = $data['account_id'];
       $this->model = new Product();
       $testing = $this->retrieveDB($data);
-      return $testing;
       $this->response['data'] = $this->manageResult($this->response['data'], null, $inventoryType);
       return $this->response();
     }

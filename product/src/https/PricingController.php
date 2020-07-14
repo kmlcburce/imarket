@@ -36,7 +36,6 @@ class PricingController extends APIController
     }
 
     public function getPrice($id){
-	  return $id;
       $result = Pricing::where('product_id', '=', $id)->orderBy('minimum', 'asc')->get();
       return (sizeof($result) > 0) ? $result : null;
     }
