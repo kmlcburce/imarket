@@ -52,7 +52,7 @@ class ProductController extends APIController
       $inventoryType = $data['inventory_type'];
       $accountId = $data['account_id'];
       $this->model = new Product();
-      $testing = $this->retrieveDB($data);
+      $this->retrieveDB($data);
       $this->response['data'] = $this->manageResult($this->response['data'], null, $inventoryType);
       return $this->response();
     }
@@ -62,7 +62,7 @@ class ProductController extends APIController
       $inventoryType = $data['inventory_type'];
       $accountId = $data['account_id'];
       $this->model = new Product();
-      $testing = $this->retrieveDB($data);
+      $this->retrieveDB($data);
       $this->response['data'] = $this->manageResultBasic($this->response['data'], null, $inventoryType);
       return $this->response();
     }
