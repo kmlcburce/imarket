@@ -1,6 +1,6 @@
 <?php
 
-namespace Increment\Imarket\Shipping;
+namespace Increment\Imarket\Shipping\Http;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;

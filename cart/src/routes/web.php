@@ -8,6 +8,7 @@ Route::post($route.'retrieve', $controller."retrieve");
 Route::post($route.'update', $controller."update");
 Route::post($route.'delete', $controller."delete");
 Route::get($route.'test', $controller."test");
+Route::post($route.'update_status', $controller."updateStatus");
 
 // Checkout Items
 $route = env('PACKAGE_ROUTE', '').'/checkout_items/';
