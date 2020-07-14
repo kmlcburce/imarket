@@ -7,6 +7,6 @@ use App\APIModel;
 class Location extends APIModel
 {
     //
-    protected $table = 'merchant_locations';
-    protected $fillable = ['merchant_id', 'latitude', 'longitude', 'route', 'locality', 'region', 'country'];
+    protected $table = 'locations';
+    protected $fillable = ['account_id', 'latitude', 'longitude', 'route', 'locality', 'region', 'country'];
 }
