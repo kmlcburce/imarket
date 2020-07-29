@@ -13,18 +13,18 @@ class CreateLocationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('locations', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->bigInteger('account_id');
-            $table->string('latitude');
-            $table->string('longitude');
-            $table->string('route');
-            $table->string('locality');
-            $table->string('region');
-            $table->string('country');
-            $table->timestamps();
-            $table->softDeletes();
-        });
+        // Schema::create('locations', function (Blueprint $table) {
+        //     $table->bigIncrements('id');
+        //     $table->bigInteger('account_id');
+        //     $table->string('latitude');
+        //     $table->string('longitude');
+        //     $table->string('route');
+        //     $table->string('locality');
+        //     $table->string('region');
+        //     $table->string('country');
+        //     $table->timestamps();
+        //     $table->softDeletes();
+        // });
     }
 
     /**
@@ -34,6 +34,6 @@ class CreateLocationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('merchant_locations');
+        // Schema::dropIfExists('merchant_locations');
     }
 }
