@@ -1,10 +1,10 @@
 <?php
 
-namespace Increment\Imarket\Merchant\Http;
+namespace Increment\Imarket\Location\Http;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
-use Increment\Imarket\Merchant\Models\Location;
+use Increment\Imarket\Location\Models\Location;
 use Carbon\Carbon;
 
 class LocationController extends APIController
