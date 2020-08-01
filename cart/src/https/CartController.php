@@ -5,6 +5,7 @@ namespace Increment\Imarket\Cart\Http;
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
 use Increment\Imarket\Cart\Models\Cart;
+use Carbon\Carbon;
 class CartController extends APIController
 {
 
@@ -14,9 +15,20 @@ class CartController extends APIController
 
   public function create(Request $request){
     $data = $request->all();
-    $data['code'] = $this->generateCode();
     $this->model = new Cart();
-    $this->insertDB($data);
+
+    $hasCart = Cart::where('account_id', '=', $request['account_id'])->first();
+    if (sizeof($hasCart) > 0) {
+      $updated_data = array(
+        'items'  => $data['items'],
+        'updated_at'  => Carbon::now()
+      );
+      Cart::where('code', '=', $hasCart['code'])->update($updated_data);
+      $this->response['data'] = true;
+    } else {
+      $data['code'] = $this->generateCode();
+      $this->insertDB($data);
+    }
     return $this->response();
   }
 
