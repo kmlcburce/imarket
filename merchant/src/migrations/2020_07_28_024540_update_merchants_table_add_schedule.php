@@ -14,7 +14,7 @@ class UpdateMerchantsTableAddSchedule extends Migration
     public function up()
     {
       Schema::table('merchants', function (Blueprint $table) {
-        $table->string('schedule')->nullable();
+        $table->string('schedule')->nullable()->after('address');
       });
     }
 
