@@ -32,7 +32,6 @@ class CartController extends APIController
     return $this->response();
   }
 
-
   public function generateCode(){
     $code = 'CRT-'.substr(str_shuffle($this->codeSource), 0, 60);
     $codeExist = Cart::where('code', '=', $code)->get();
@@ -43,4 +42,10 @@ class CartController extends APIController
     }
   }
 
+  public function retrieveByAccountId($accountId) {
+    $cart = Cart::where('account_id', '=', $accountId)->where('deleted_at', '=', null)->orderBy('updated_at', 'DESC')->get();
+    if (sizeof($cart) > 0) {
+      return $cart[0];
+    }
+  }
 }
