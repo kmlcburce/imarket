@@ -424,4 +424,9 @@ public function getCheckout($payload, $payloadValue, $accountId){
       return false;
     }
   }
+
+  public function getByParams($column, $value){
+    $result = Checkout::where($column, '=', $value)->get();
+    return sizeof($result) > 0 ? $result[0] : null;
+  }
 }
