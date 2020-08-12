@@ -51,15 +51,15 @@ class CheckoutItemController extends APIController
             $checkout->payment_status = 'added';
     		$checkout->save();
     		if($checkout->id){
-          if($data['payload'] == 'profile'){
-            // save checkout template for profiles checkout
-            $checkoutTemplate = new CheckoutTemplate();
-            $checkoutTemplate->checkout_id = $checkout->id;
-            $checkoutTemplate->front = $data['front'];
-            $checkoutTemplate->back = $data['back'];
-            $checkoutTemplate->created_at = Carbon::now();
-            $checkoutTemplate->save();
-          }
+                if($data['payload'] == 'profile'){
+                    // save checkout template for profiles checkout
+                    $checkoutTemplate = new CheckoutTemplate();
+                    $checkoutTemplate->checkout_id = $checkout->id;
+                    $checkoutTemplate->front = $data['front'];
+                    $checkoutTemplate->back = $data['back'];
+                    $checkoutTemplate->created_at = Carbon::now();
+                    $checkoutTemplate->save();
+                }
           
     			$insertData['checkout_id'] = $checkout->id;
 	    		$this->model = new CheckoutItem();
