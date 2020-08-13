@@ -26,4 +26,8 @@ class CheckoutItemController extends APIController
     public function insertInArray($array){
         CheckoutItem::insert($array);
     }
+
+    public function getQty($payload, $payloadValue){
+        return CheckoutItem::where('payload', '=', $payload)->where('payload_value', '=', $payloadValue)->where('status', '!=', 'cancelled')->sum('qty');
+    }
 }
