@@ -37,9 +37,9 @@ class CheckoutController extends APIController
     $result = $this->response['data'];
     if(sizeof($result) > 0){
       $i = 0;
-      foreach ($variable as $key) {
-        $this->response['data']$[$i]['account'] = $this->retrieveAccountDetails($key->account_id);
-        $i = 0;
+      foreach ($result as $key) {
+        $this->response['data']$[$i]['account'] = $this->retrieveAccountDetails($kresult[$i]['account_id']);
+        $i++;
       }
     }
     return $this->response();
