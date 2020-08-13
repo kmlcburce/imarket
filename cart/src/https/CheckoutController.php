@@ -40,19 +40,21 @@ class CheckoutController extends APIController
       $cartItems = app($this->cartClass)->getItemsInArray('account_id', $data['account_id']);
       if(sizeof($cartItems) > 0){
         $items = array();
+        $i = 0;
         foreach ($cartItems as $key => $value) {
           $item = array(
             'account_id'  => $data['account_id'],
             'checkout_id' => $this->response['data'],
             'payload'     => 'product',
-            'payload_value' => $key['id'],
-            'size'        => null,
-            'color'       => null,
-            'qty'       => $key['quantity'],
-            'price'       => $key['price'],
+            'payload_value' => $cartItems[0]['id'],
+            'size'        => '',
+            'color'       => '',
+            'qty'       => $cartItems[0]['quantity'],
+            'price'       => $cartItems[0]['price'][0]['price'],
             'status'       => 'pending'
           );
           $items[] = $item;
+          $i++;
         }
         app($this->checkoutItemClass)->insertInArray($items);
       }
