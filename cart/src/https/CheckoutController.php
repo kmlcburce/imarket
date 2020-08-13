@@ -38,7 +38,6 @@ class CheckoutController extends APIController
     if($this->response['data'] > 0){
       // create items
       $cartItems = app($this->cartClass)->getItemsInArray('account_id', $data['account_id']);
-      echo json_encode($cartItems);
       if(sizeof($cartItems) > 0){
         $items = array();
         foreach ($cartItems as $key => $value) {

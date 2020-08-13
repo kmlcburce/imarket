@@ -52,7 +52,7 @@ class CartController extends APIController
   public function getItemsInArray($column, $value){
     $result = Cart::where($column, '=', $value)->get();
     if(sizeof($result) > 0){
-      $items = json_decode($result[0]['items']);
+      return json_decode($result[0]['items']);
     }else{
       return null;
     }
