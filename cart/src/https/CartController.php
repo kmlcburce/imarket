@@ -49,6 +49,17 @@ class CartController extends APIController
     }
   }
 
+  public function requestArray(Request $request){
+    $data = $request->all();
+    $result = Cart::where($data['column'], '=', $data['value'])->get();
+    if(sizeof($result) > 0){
+      $this->response['data'] = json_decode($result[0]['items'], false);
+    }else{
+      return null;
+    }
+    return $this->response();
+  }
+
   public function getItemsInArray($column, $value){
     $result = Cart::where($column, '=', $value)->get();
     if(sizeof($result) > 0){
