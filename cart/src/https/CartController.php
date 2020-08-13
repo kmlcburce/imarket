@@ -52,7 +52,7 @@ class CartController extends APIController
   public function requestArray(Request $request){
     $data = $request->all();
     $result = Cart::where($data['column'], '=', $data['value'])->get();
-    if(sizeof($result) > 0){
+    if($result){
       $this->response['data'] = json_decode($result[0]['items'], false);
     }else{
       return null;
@@ -62,7 +62,7 @@ class CartController extends APIController
 
   public function getItemsInArray($column, $value){
     $result = Cart::where($column, '=', $value)->get();
-    if(sizeof($result) > 0){
+    if($result){
       return json_decode($result[0]['items'], false);
     }else{
       return null;
