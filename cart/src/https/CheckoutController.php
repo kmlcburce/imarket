@@ -41,7 +41,7 @@ class CheckoutController extends APIController
       if(sizeof($cartItems) > 0){
         $items = array();
         foreach ($cartItems as $key => $value) {
-          $iten = array(
+          $item = array(
             'account_id'  => $data['account_id'],
             'checkout_id' => $this->response['data'],
             'payload'     => 'product',
