@@ -57,6 +57,8 @@ class CheckoutController extends APIController
         app($this->checkoutItemClass)->insertInArray($items);
       }
     }
+    
+    return $this->response();
   }
 
   public function getByParams($column, $value){
