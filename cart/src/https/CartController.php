@@ -52,7 +52,6 @@ class CartController extends APIController
   public function getItemsInArray($column, $value){
     $result = Cart::where($column, '=', $value)->get();
     if(sizeof($result) > 0){
-      echo  json_decode($result[0]['items'], false);
       return json_decode($result[0]['items'], false);
     }else{
       return null;
