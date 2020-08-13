@@ -49,7 +49,7 @@ class CheckoutController extends APIController
             'size'        => null,
             'color'       => null,
             'price'       => $key['price'],
-            'satus'       => 'pending'
+            'status'       => 'pending'
           );
           $items[] = $item;
         }
