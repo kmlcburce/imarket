@@ -48,6 +48,7 @@ class CheckoutController extends APIController
             'payload_value' => $key['id'],
             'size'        => null,
             'color'       => null,
+            'qty'       => $key['quantity'],
             'price'       => $key['price'],
             'status'       => 'pending'
           );
