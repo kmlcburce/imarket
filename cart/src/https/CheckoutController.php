@@ -49,7 +49,6 @@ class CheckoutController extends APIController
             'size'        => null,
             'color'       => null,
             'price'       => $key['price'],
-            'currency'    => $key['currency'],
             'satus'       => 'pending'
           );
           $items[] = $item;
