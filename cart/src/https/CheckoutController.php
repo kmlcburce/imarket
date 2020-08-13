@@ -46,10 +46,10 @@ class CheckoutController extends APIController
             'account_id'  => $data['account_id'],
             'checkout_id' => $this->response['data'],
             'payload'     => 'product',
-            'payload_value' => $cartItems[0]->id,
+            'payload_value' => $key->id,
             'size'        => '',
             'color'       => '',
-            'qty'       => $cartItems[0]->quantity,
+            'qty'       => $key->quantity,
             'price'       => 100,
             'status'       => 'pending'
           );
