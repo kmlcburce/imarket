@@ -30,6 +30,21 @@ class CheckoutController extends APIController
     );
   }
 
+  public function retrieve(Request $request){
+    $data = $request->all();
+    $this->model = new Checkout();
+    $this->retrieveDB($data);
+    $result = $this->response['data'];
+    if(sizeof($result) > 0){
+      $i = 0;
+      foreach ($variable as $key) {
+        $this->response['data']$[$i]['account'] = $this->retrieveAccountDetails($key->account_id);
+        $i = 0;
+      }
+    }
+    return $this->response();
+  }
+
   public function create(Request $request){
     $data = $request->all();
     $this->model = new Checkout();
