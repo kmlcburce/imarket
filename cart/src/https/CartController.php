@@ -52,6 +52,7 @@ class CartController extends APIController
   public function requestArray(Request $request){
     $data = $request->all();
     $result = Cart::where($data['column'], '=', $data['value'])->get();
+    echo json_encode($result);
     if($result){
       $this->response['data'] = json_decode($result[0]['items'], false);
     }else{
