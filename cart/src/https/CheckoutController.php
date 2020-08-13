@@ -44,8 +44,8 @@ class CheckoutController extends APIController
           $iten = array(
             'account_id'  => $data['account_id'],
             'checkout_id' => $this->response['data'],
-            'payload'     => null,
-            'payload_value' => null,
+            'payload'     => 'product',
+            'payload_value' => $key['id'],
             'size'        => null,
             'color'       => null,
             'price'       => $key['price'],
