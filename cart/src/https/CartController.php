@@ -68,4 +68,16 @@ class CartController extends APIController
       return null;
     }
   }
+
+  public function emptyItems($accountId) {
+    $cart = Cart::where('account_id', '=', $accountId)->get();
+    if (sizeof($cart) > 0) {
+      $updated_data = array(
+        'items'  => json_encode([]),
+        'updated_at'  => Carbon::now()
+      );
+      Cart::where('code', '=', $cart[0]['code'])->update($updated_data);
+    }
+    return $this->response();
+  }
 }

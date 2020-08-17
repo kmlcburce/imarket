@@ -6,10 +6,13 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
 use Increment\Imarket\Cart\Models\Checkout;
 use Increment\Imarket\Cart\Models\CheckoutItem;
+use Increment\Imarket\Merchant\Models\Merchant;
 use Increment\Imarket\Product\Models\Product;
 use Increment\Imarket\Product\Models\Pricing;
 use Increment\Imarket\Payment\Models\StripeWebhook;
 use Carbon\Carbon;
+use App\Jobs\Notifications;
+
 class CheckoutController extends APIController
 {
   protected $subTotal = 0;
@@ -65,13 +68,22 @@ class CheckoutController extends APIController
             'size'        => '',
             'color'       => '',
             'qty'       => $cartItems[$i]['quantity'],
-            'price'       => 100,
+            'price'       => $cartItems[$i]['price'][0]['price'],
             'status'       => 'pending'
           );
           $items[] = $item;
           $i++;
         }
+
         app($this->checkoutItemClass)->insertInArray($items);
+        app($this->cartClass)->emptyItems($data['account_id']);
+
+        $data['merchant_account_id'] = null;
+        $merchant = Merchant::select('account_id')->where('id', '=', $data['merchant_id'])->get();
+        if (sizeof($merchant) > 0) {
+          $data['merchant_account_id'] = $merchant[0]['account_id'];
+        }
+        Notifications::dispatch('orders', $data);
       }
     }
 
