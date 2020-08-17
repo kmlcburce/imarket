@@ -21,7 +21,7 @@ class CheckoutItemController extends APIController
 
     public function retrieveOnOrder(Request $request){
         $data = $request->all();
-        $this->model = new Checkout();
+        $this->model = new CheckoutItem();
         $this->retrieveDB($data);
         $result = $this->response['data'];
         if(sizeof($result) > 0){
