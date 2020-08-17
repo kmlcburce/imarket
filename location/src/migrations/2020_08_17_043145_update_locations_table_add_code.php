@@ -15,8 +15,8 @@ class UpdateLocationsTableAddCode extends Migration
     {
         //
         Schema::table('locations', function (Blueprint $table) {
-            $table->bigInteger('merchant_id')->after('address_type')->nullable();
-            $table->string('code')->after('merchant_id')->nullable();
+            $table->string('code')->after('id')->nullable();
+            $table->bigInteger('merchant_id')->after('code')->nullable();
         });
     }
 
