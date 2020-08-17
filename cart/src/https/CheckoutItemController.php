@@ -37,8 +37,10 @@ class CheckoutItemController extends APIController
                 'color'     => $key['color'],
                 'status'     => $key['status'],
             );
+            $array[] = $item;
             $i++;
           }
+          $this->response['data'] = $array;
         }
         return $this->response();
     }
