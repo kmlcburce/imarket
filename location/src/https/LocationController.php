@@ -46,4 +46,10 @@ class LocationController extends APIController
         $scope_array = explode(',',$scope[0]["code"]);
         return $scope_array;
       }
+
+
+    public function getByParams($column, $value){
+      $result = Location::where($column, '=', $value)->get();
+      return sizeof($result) > 0 ? $result[0] : null;
+    }
 }

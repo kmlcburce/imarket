@@ -116,4 +116,9 @@ class MerchantController extends APIController
     $result = Merchant::where($column, '=', $value)->get();
     return sizeof($result) > 0 ? $result[0] : null;
   }
+
+  public function getByParamsReturnByParam($column, $value, $param){
+    $result = Merchant::where($column, '=', $value)->get();
+    return sizeof($result) > 0 ? $result[0][$param] : null;
+  }
 }
