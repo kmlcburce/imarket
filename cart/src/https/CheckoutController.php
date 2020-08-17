@@ -20,6 +20,7 @@ class CheckoutController extends APIController
   protected $tax = 0;
   public $cartClass = 'Increment\Imarket\Cart\Http\CartController';
   public $checkoutItemClass = 'Increment\Imarket\Cart\Http\CheckoutItemController';
+  public $merchantClass = 'Increment\Imarket\Merchant\Http\MerchantController';
 
   function __construct(){
   	$this->model = new Checkout();
@@ -68,9 +69,11 @@ class CheckoutController extends APIController
 
   public function create(Request $request){
     $data = $request->all();
+    $prefix = app($this->merchantClass)->getByParamsReturnByParam('id', $data['merchant_id'], 'prefix');
+    $counter = Checkout::where('merchant_id', '=', $data['merchant_id'])->count();
+    $data['order_number'] = $prefix ? $prefix.$this->toCode($counter) : $this->toCode($counter);
     $this->model = new Checkout();
     $this->insertDB($data);
-
     if($this->response['data'] > 0){
       // create items
       $cartItems = app($this->cartClass)->getItemsInArray('account_id', $data['account_id']);
@@ -108,8 +111,24 @@ class CheckoutController extends APIController
     return $this->response();
   }
 
+  public function toCode($size){
+    $length = strlen((string)$size);
+    $code = '00000000';
+    return substr_replace($code, $size, intval(7 - $length));
+  }
+
   public function getByParams($column, $value){
     $result = Checkout::where($column, '=', $value)->get();
     return sizeof($result) > 0 ? $result[0] : null;
+  }
+
+  public function generateCode(){
+    $code = 'che_'.substr(str_shuffle($this->codeSource), 0, 60);
+    $codeExist = Checkout::where('code', '=', $code)->get();
+    if(sizeof($codeExist) > 0){
+      $this->generateCode();
+    }else{
+      return $code;
+    }
   }
 }
