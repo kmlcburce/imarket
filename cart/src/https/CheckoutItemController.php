@@ -30,7 +30,7 @@ class CheckoutItemController extends APIController
           foreach ($result as $key) {
             $item = array(
                 'id'        => $key['id'],
-                'title'     => app($this->productClass)->getByParamsReturnByParam('id', $key['payload_value']),
+                'title'     => app($this->productClass)->getByParamsReturnByParam('id', $key['payload_value'], 'title'),
                 'qty'       => $key['qty'],
                 'price'     => $key['price'],
                 'size'      => $key['size'],
