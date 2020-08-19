@@ -121,6 +121,12 @@ class CheckoutController extends APIController
     return substr_replace($code, $size, intval(7 - $length));
   }
 
+  
+  public function getByParamsReturnByParam($column, $value, $param){
+    $result = Checkout::where($column, '=', $value)->get();
+    return sizeof($result) > 0 ? $result[0][$param] : null;
+  }
+
   public function getByParams($column, $value){
     $result = Checkout::where($column, '=', $value)->get();
     return sizeof($result) > 0 ? $result[0] : null;
