@@ -103,10 +103,10 @@ class CheckoutController extends APIController
         app($this->checkoutItemClass)->insertInArray($items);
         app($this->cartClass)->emptyItems($data['account_id']);
 
-        $data['merchant_account_id'] = null;
+        $data['merchant'] = null;
         $merchant = Merchant::select('account_id')->where('id', '=', $data['merchant_id'])->get();
         if (sizeof($merchant) > 0) {
-          $data['merchant_account_id'] = $merchant[0]['account_id'];
+          $data['merchant'] = $merchant[0]['code'];
         }
         Notifications::dispatch('orders', $data);
       }
