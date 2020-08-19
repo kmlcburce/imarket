@@ -32,7 +32,8 @@ class CheckoutController extends APIController
       'order_number',
       'payment_type',
       'payment_payload',
-      'payment_payload_value'
+      'payment_payload_value',
+      'notes'
     );
   }
 
@@ -74,6 +75,7 @@ class CheckoutController extends APIController
     $prefix = app($this->merchantClass)->getByParamsReturnByParam('id', $data['merchant_id'], 'prefix');
     $counter = Checkout::where('merchant_id', '=', $data['merchant_id'])->count();
     $data['order_number'] = $prefix ? $prefix.$this->toCode($counter) : $this->toCode($counter);
+    $data['code'] = $this->generateCode();
     $this->model = new Checkout();
     $this->insertDB($data);
     if($this->response['data'] > 0){
