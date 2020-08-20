@@ -12,6 +12,7 @@ use Increment\Imarket\Product\Models\Pricing;
 use Increment\Imarket\Payment\Models\StripeWebhook;
 use Carbon\Carbon;
 use App\Jobs\Notifications;
+use Illuminate\Support\Facades\DB;
 
 class CheckoutController extends APIController
 {
