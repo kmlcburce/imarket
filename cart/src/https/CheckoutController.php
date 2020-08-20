@@ -57,7 +57,7 @@ class CheckoutController extends APIController
     $data = $request->all();
     $result = Checkout::where('created_at', '>', $data['date'])
                     ->where('created_at', '>', Carbon::createFromFormat('Y-m', $data['date'])->addMonth())
-                    ->where('merchant_id', '>', $data['merchant_id'])
+                    ->where('merchant_id', '=', $data['merchant_id'])
                     ->groupBy('date')
                     ->orderBy('date', 'ASC') // or ASC
                     ->get(array(
