@@ -91,6 +91,7 @@ class LocationController extends APIController
       if($to){
         if($from){
           $distance = $this->getLongLatDistance($from['latitude'], $from['longitude'], $to['latitude'], $to['longitude']);
+          $distance = round($distance, 1);
         }
         return '('.$distance.'km)'.$to['route'].', '.$to['locality'];
       }else{
