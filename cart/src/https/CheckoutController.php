@@ -12,6 +12,7 @@ use Increment\Imarket\Product\Models\Pricing;
 use Increment\Imarket\Payment\Models\StripeWebhook;
 use Carbon\Carbon;
 use App\Jobs\Notifications;
+use Illuminate\Support\Facades\DB;
 
 class CheckoutController extends APIController
 {
@@ -54,8 +55,14 @@ class CheckoutController extends APIController
 
   public function retrieveOrders(Request $request){
     $data = $request->all();
-    $this->model = new Checkout();
-    $this->retrieveDB($data);
+    $data['offset'] = isset($data['offset']) ? $data['offset'] : 0;
+    $data['limit'] = isset($data['offset']) ? $data['limit'] : 5;
+    $result = Checkout::select([
+                  DB::raw("SQL_CALC_FOUND_ROWS id")
+              ])where($data['condition'][0]['column'], $data['condition'][0]['clause'], $data['condition'][0]['value'])
+              ->offset($data['offset'])
+              ->limit($data['limit'])
+              ->get()
     $result = $this->response['data'];
     if(sizeof($result) > 0){
       $i = 0;
@@ -67,6 +74,7 @@ class CheckoutController extends APIController
         $i++;
       }
     }
+    $this->response['size'] = DB::select("SELECT FOUND_ROWS() as `rows`")[0]->rows;
     return $this->response();
   }
 
