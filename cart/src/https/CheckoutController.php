@@ -67,6 +67,7 @@ class CheckoutController extends APIController
               ->limit($data['limit'])
               ->orderBy($data['sort']['column'], $data['sort']['value'])
               ->get();
+    $this->response['data'] = json_decode($this->response['data'], true);
     $result = $this->response['data'];
     if(sizeof($result) > 0){
       $i = 0;
