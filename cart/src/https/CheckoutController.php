@@ -62,8 +62,7 @@ class CheckoutController extends APIController
                     ->groupBy('status')
                     ->get(array(
                         DB::raw('SUM(total) as `total`'),
-                        'status',
-                        'currency'
+                        'status'
                     ));
 
     $this->response['data'] = $results;
