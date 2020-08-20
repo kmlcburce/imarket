@@ -85,8 +85,14 @@ class LocationController extends APIController
     }
 
     public function getAppenedLocationByParams($column, $value, $merchantId){
-      $distance = $this->getDistanceFromMerchant($merchantId, $value);
-      $result = Location::where($column, '=', $value)->get();
-      return sizeof($result) > 0 ? '('.$distance.'km)'.$result[0]['route'].', '.$result[0]['locality']: null;
+      $from = $this->getByParams('merchant_id', $merchantId);
+      $to = $this->getByParams($column, $value)->get();
+      $distance = null;
+      
+      if($from && $to){
+        $distance = $this->getLongLatDistance($from['latitude'], $from['longitude'], $to['latitude'], $to['longitude']);
+      }
+      
+      return sizeof($to) > 0 ? '('.$distance.'km)'.$to['route'].', '.$to['locality']: null;
     }
 }
