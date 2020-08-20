@@ -80,12 +80,12 @@ class CheckoutController extends APIController
     foreach ($results as $key) {
       $index = intvat(substr($key->date, 7, 2) - 1);
       if($key->status == 'completed'){
-        $completedSeries[$index] = $key->total
+        $completedSeries[$index] = $key->total;
       }else if($key->status == 'cancelled'){
-        $cancelledSeries[$index] = $key->total
+        $cancelledSeries[$index] = $key->total;
       }
     }
-    
+
     $this->response['data'] = array(
       'completed' => $completedSeries,
       'cancelled' => $cancelledSeries,
