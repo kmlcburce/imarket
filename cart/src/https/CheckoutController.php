@@ -57,8 +57,7 @@ class CheckoutController extends APIController
     $data = $request->all();
     $data['offset'] = isset($data['offset']) ? $data['offset'] : 0;
     $data['limit'] = isset($data['offset']) ? $data['limit'] : 5;
-    $this->response['data'] = DB::table('checkouts as T1')
-              ->select([
+    $this->response['data'] = Checkout::select([
                   DB::raw("SQL_CALC_FOUND_ROWS")
               ])
               ->select('T1.*')
@@ -67,6 +66,7 @@ class CheckoutController extends APIController
               ->limit($data['limit'])
               ->orderBy($data['sort']['column'], $data['sort']['value'])
               ->get();
+    $this->response['size'] = DB::select("SELECT FOUND_ROWS() as `rows`")[0]->rows;
     $this->response['data'] = json_decode($this->response['data'], true);
     $result = $this->response['data'];
     if(sizeof($result) > 0){
@@ -79,7 +79,7 @@ class CheckoutController extends APIController
         $i++;
       }
     }
-    $this->response['size'] = DB::select("SELECT FOUND_ROWS() as `rows`")[0]->rows;
+    
     return $this->response();
   }
 
