@@ -22,7 +22,7 @@ class CheckoutController extends APIController
   public $checkoutItemClass = 'Increment\Imarket\Cart\Http\CheckoutItemController';
   public $merchantClass = 'Increment\Imarket\Merchant\Http\MerchantController';
   public $locationClass = 'Increment\Imarket\Location\Http\LocationController';
-  public $deliveryClass = 'Increment\Imarket\Location\Http\DeliveryController';
+  public $deliveryClass = 'Increment\Imarket\Delivery\Http\DeliveryController';
 
   function __construct(){
   	$this->model = new Checkout();
