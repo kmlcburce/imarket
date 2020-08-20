@@ -78,8 +78,8 @@ class CheckoutController extends APIController
     }
 
     foreach ($results as $key) {
-      $index = intval(substr($key->date, 7)) - 1;
-      echo $key->date.'/'.$index;
+      $index = intval(substr($key->date, 8)) - 1;
+      // echo $key->date.'/'.$index;
       if($key->status == 'completed'){
         $completedSeries[$index] = $key->total;
       }else if($key->status == 'cancelled'){
