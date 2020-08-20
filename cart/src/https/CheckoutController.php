@@ -60,7 +60,7 @@ class CheckoutController extends APIController
     $this->response['data'] = Checkout::select([
                   DB::raw("SQL_CALC_FOUND_ROWS")
               ])
-              ->select('T1.*')
+              ->select('*')
               ->where($data['condition'][0]['column'], $data['condition'][0]['clause'], $data['condition'][0]['value'])
               ->offset($data['offset'])
               ->limit($data['limit'])
