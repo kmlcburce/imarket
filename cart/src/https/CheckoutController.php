@@ -55,9 +55,20 @@ class CheckoutController extends APIController
 
   public function summaryOfOrders(Request $request){
     $data = $request->all();
-    $result = Checkout::where('created_at', '>=', $data['date'].'-01')
+    $completed = Checkout::where('created_at', '>=', $data['date'].'-01')
                     ->where('created_at', '<=', $data['date'].'-31')
                     ->where('merchant_id', '=', $data['merchant_id'])
+                    ->where('status', '=', 'completed')
+                    ->groupBy('date')
+                    ->orderBy('date', 'ASC') // or ASC
+                    ->get(array(
+                        DB::raw('DATE(`created_at`) AS `date`'),
+                        DB::raw('SUM(total) as `count`')
+                    ));
+    $cancelled = Checkout::where('created_at', '>=', $data['date'].'-01')
+                    ->where('created_at', '<=', $data['date'].'-31')
+                    ->where('merchant_id', '=', $data['merchant_id'])
+                    ->where('status', '=', 'cancelled')
                     ->groupBy('date')
                     ->orderBy('date', 'ASC') // or ASC
                     ->get(array(
@@ -84,7 +95,10 @@ class CheckoutController extends APIController
     //     'name'  => 'Cancelled',
     //     'data'  => $cancelled
     // ));
-    $this->response['data'] = $result;
+    $this->response['data'] = array(
+      'cancelled' => $cancelled,
+      'completed' => $completed
+    );
     return $this->response();;
   }
 
