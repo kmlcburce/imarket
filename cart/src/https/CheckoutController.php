@@ -55,11 +55,11 @@ class CheckoutController extends APIController
 
   public function summaryOfDailyOrders(Request $request){
     $data = $request->all();
-    
+
     $results = Checkout::where('created_at', '>=', $data['date'].' 00:00:00')
                     ->where('created_at', '<=', $data['date'].' 23:59:59')
                     ->where('merchant_id', '=', $data['merchant_id'])
-                    ->groupBy('date', 'status')
+                    ->groupBy('status')
                     ->get(array(
                         DB::raw('SUM(total) as `total`'),
                         'status'
