@@ -61,7 +61,7 @@ class CheckoutController extends APIController
                     ->orderBy('date', 'ASC') // or ASC
                     ->get(array(
                         DB::raw('DATE(`created_at`) AS `date`'),
-                        DB::raw('COUNT(total) as `count`')
+                        DB::raw('SUM(total) as `count`')
                     ));
     // ->where('created_at', '>', Carbon::createFromFormat('Y-m', $data['date'])->addMonth())
     // $result = $result->groupBy('date');
