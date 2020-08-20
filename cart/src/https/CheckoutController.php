@@ -55,8 +55,8 @@ class CheckoutController extends APIController
 
   public function summaryOfOrders(Request $request){
     $data = $request->all();
-    $result = Checkout::where('created_at', '>', $data['from_date'])
-                    ->where('created_at', '<', $data['to_date'])
+    $result = Checkout::where('created_at', '>=', $data['date'].'-01')
+                    ->where('created_at', '<=', $data['date'].'-31')
                     ->where('merchant_id', '=', $data['merchant_id'])
                     ->groupBy('date')
                     ->orderBy('date', 'ASC') // or ASC
