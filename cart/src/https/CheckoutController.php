@@ -62,7 +62,7 @@ class CheckoutController extends APIController
                     ->orderBy('date', 'ASC') // or ASC
                     ->get(array(
                         DB::raw('DATE(`created_at`) AS `date`'),
-                        DB::raw('SUM(total) as `count`'),
+                        DB::raw('SUM(total) as `total`'),
                         'status'
                     ));
 
