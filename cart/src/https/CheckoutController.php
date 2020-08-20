@@ -52,6 +52,40 @@ class CheckoutController extends APIController
     return $this->response();
   }
 
+  public function summaryOfOrders(Request $request){
+    $data = $request->all();
+    $result = Checkout::select(array(
+              DB::raw('DATE(`created_at`) as `date`'),
+              DB::raw('COUNT(total) as `count`')
+            ))
+            ->where('merchant_id', '=', $data['merchant_id'])
+            ->where('created_at', '>', $data['date'])
+            ->where('created_at', '<', Carbon::createFromFormat('Y-m', $data['date'])->addMonth())
+            ->group_by('date')
+            ->order_by('date', 'ASC')
+            ->lists('count', 'date');
+
+    // $completed = array();
+    // $cancelled = array();
+    // if(sizeof($result) > 0){
+    //   $numberOfDays = Carbon::createFromFormat('Y-m', $data['date'])->daysInMonth;
+    //   foreach ($days as $date => $count) {
+    //     if($)
+    //       print($date . ' - ' . $count);
+    //   }
+    // }
+    // $this->response['data'] = array(
+    //   array(
+    //     'name'  => 'Completed',
+    //     'data'  => $completed
+    //   ), array(
+    //     'name'  => 'Cancelled',
+    //     'data'  => $cancelled
+    // ));
+    $this->response['data'] = $result;
+    return $this->response();;
+  }
+
   public function retrieveOrders(Request $request){
     $data = $request->all();
     $this->model = new Checkout();
