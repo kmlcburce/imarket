@@ -58,33 +58,35 @@ class CheckoutController extends APIController
     $completed = Checkout::where('created_at', '>=', $data['date'].'-01')
                     ->where('created_at', '<=', $data['date'].'-31')
                     ->where('merchant_id', '=', $data['merchant_id'])
-                    ->where('status', '=', 'completed')
-                    ->groupBy('date')
+                    ->groupBy('date', 'status')
                     ->orderBy('date', 'ASC') // or ASC
                     ->get(array(
                         DB::raw('DATE(`created_at`) AS `date`'),
-                        DB::raw('SUM(total) as `count`')
+                        DB::raw('SUM(total) as `count`'),
+                        'status'
                     ));
-    $cancelled = Checkout::where('created_at', '>=', $data['date'].'-01')
-                    ->where('created_at', '<=', $data['date'].'-31')
-                    ->where('merchant_id', '=', $data['merchant_id'])
-                    ->where('status', '=', 'cancelled')
-                    ->groupBy('date')
-                    ->orderBy('date', 'ASC') // or ASC
-                    ->get(array(
-                        DB::raw('DATE(`created_at`) AS `date`'),
-                        DB::raw('SUM(total) as `count`')
-                    ));
-    // ->where('created_at', '>', Carbon::createFromFormat('Y-m', $data['date'])->addMonth())
-    // $result = $result->groupBy('date');
-
-    // $completed = array();
-    // $cancelled = array();
+    // $cancelled = Checkout::where('created_at', '>=', $data['date'].'-01')
+    //                 ->where('created_at', '<=', $data['date'].'-31')
+    //                 ->where('merchant_id', '=', $data['merchant_id'])
+    //                 ->where('status', '=', 'cancelled')
+    //                 ->groupBy('date')
+    //                 ->orderBy('date', 'ASC') // or ASC
+    //                 ->get(array(
+    //                     DB::raw('DATE(`created_at`) AS `date`'),
+    //                     DB::raw('SUM(total) as `count`')
+    //                 ));
+    // $completedSeries = array();
+    // $cancelledSeries = array();
     // if(sizeof($result) > 0){
-    //   $numberOfDays = Carbon::createFromFormat('Y-m', $data['date'])->daysInMonth;
-    //   foreach ($days as $date => $count) {
-    //     if($)
-    //       print($date . ' - ' . $count);
+    //   $numberOfDays = Carbon::createFromFormat('Y-m-d', $data['date'].'-01')->daysInMonth;
+    //   for ($i = 1; $i <= $numberOfDays; $i++) {
+    //     $newDate = $data['date'];
+    //     if($i < 10){
+    //       $newDate .= '0'.$i;
+    //     }else{
+    //       $newDate .=$i;
+    //     }
+    //     if($newDate == $)
     //   }
     // }
     // $this->response['data'] = array(
@@ -96,7 +98,6 @@ class CheckoutController extends APIController
     //     'data'  => $cancelled
     // ));
     $this->response['data'] = array(
-      'cancelled' => $cancelled,
       'completed' => $completed
     );
     return $this->response();;
