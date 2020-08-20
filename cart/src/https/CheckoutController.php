@@ -88,8 +88,13 @@ class CheckoutController extends APIController
     }
 
     $this->response['data'] = array(
-      'completed' => $completedSeries,
-      'cancelled' => $cancelledSeries,
+      'series' => array(array(
+        'name'  => 'Completed',
+        'data'  => $completedSeries
+      ), array(
+        'name'  => 'Cancelled',
+        'data'  => $cancelledSeries
+      )),
       'categories' => $categories
     );
     return $this->response();;
