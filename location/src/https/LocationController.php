@@ -88,9 +88,10 @@ class LocationController extends APIController
       $from = $this->getByParams('merchant_id', $merchantId);
       $to = $this->getByParams($column, $value);
       $distance = null;
-
-      if($from && $to){
-        $distance = $this->getLongLatDistance($from['latitude'], $from['longitude'], $to['latitude'], $to['longitude']);
+      if($to){
+        if($from){
+          $distance = $this->getLongLatDistance($from['latitude'], $from['longitude'], $to['latitude'], $to['longitude']);
+        }
         return '('.$distance.'km)'.$to['route'].', '.$to['locality'];
       }else{
         return null;
