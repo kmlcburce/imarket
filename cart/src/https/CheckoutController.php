@@ -62,9 +62,9 @@ class CheckoutController extends APIController
             ->where('merchant_id', '=', $data['merchant_id'])
             ->where('created_at', '>', $data['date'])
             ->where('created_at', '<', Carbon::createFromFormat('Y-m', $data['date'])->addMonth())
-            ->group_by('date')
             ->order_by('date', 'ASC')
             ->lists('count', 'date');
+    $result = $result->group_by('date');
 
     // $completed = array();
     // $cancelled = array();
