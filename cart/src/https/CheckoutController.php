@@ -55,16 +55,15 @@ class CheckoutController extends APIController
 
   public function summaryOfOrders(Request $request){
     $data = $request->all();
-    $result = Checkout::select(array(
-              DB::raw('DATE(`created_at`) as `date`'),
-              DB::raw('COUNT(total) as `count`')
-            ))
-            ->where('merchant_id', '=', $data['merchant_id'])
-            ->where('created_at', '>', $data['date'])
-            ->where('created_at', '<', Carbon::createFromFormat('Y-m', $data['date'])->addMonth())
-            ->orderBy('date', 'ASC')
-            ->lists('count', 'date');
-    $result = $result->group_by('date');
+    $result = Checkout::where('created_at', '>', $data['date'])
+                    ->where('created_at', '>', Carbon::createFromFormat('Y-m', $data['date'])->addMonth())
+                    ->where('merchant_id', '>', $data['merchant_id'])
+                    ->orderBy('date', 'ASC') // or ASC
+                    ->get(array(
+                        DB::raw('DATE(`created_at`) AS `date`'),
+                        DB::raw('COUNT(total) as `count`')
+                    ));
+    $result = $result->groupBy('date');
 
     // $completed = array();
     // $cancelled = array();
