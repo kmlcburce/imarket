@@ -58,8 +58,9 @@ class CheckoutController extends APIController
     $data['offset'] = isset($data['offset']) ? $data['offset'] : 0;
     $data['limit'] = isset($data['offset']) ? $data['limit'] : 5;
     $this->response['data'] = Checkout::select([
-                  DB::raw("SQL_CALC_FOUND_ROWS *")
+                  DB::raw("SQL_CALC_FOUND_ROWS id")
               ])
+              ->select('*')
               ->where($data['condition'][0]['column'], $data['condition'][0]['clause'], $data['condition'][0]['value'])
               ->offset($data['offset'])
               ->limit($data['limit'])
