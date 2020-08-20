@@ -56,7 +56,6 @@ class CheckoutController extends APIController
   public function summaryOfOrders(Request $request){
     $data = $request->all();
     $result = Checkout::where('created_at', '>', $data['date'])
-                    ->where('created_at', '>', Carbon::createFromFormat('Y-m', $data['date'])->addMonth())
                     ->where('merchant_id', '=', $data['merchant_id'])
                     ->groupBy('date')
                     ->orderBy('date', 'ASC') // or ASC
@@ -64,6 +63,7 @@ class CheckoutController extends APIController
                         DB::raw('DATE(`created_at`) AS `date`'),
                         DB::raw('COUNT(total) as `count`')
                     ));
+    // ->where('created_at', '>', Carbon::createFromFormat('Y-m', $data['date'])->addMonth())
     // $result = $result->groupBy('date');
 
     // $completed = array();
