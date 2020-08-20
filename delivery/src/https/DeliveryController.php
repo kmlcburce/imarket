@@ -34,7 +34,7 @@ class DeliveryController extends APIController
 
     if($this->response['data'] > 0){
       $array = array(
-        'merchant'    => app($this->$merchantClass)->getByParamsReturnByParam('id', $data['merchant_id'], 'code'),
+        'merchant'    => app($this->merchantClass)->getByParamsReturnByParam('id', $data['merchant_id'], 'code'),
         'delivery'    => $data['code'],
         'checkout'    => app($this->checkoutClass)->getByParamsReturnByParam('id', $data['checkout_id'], 'code'),
         'assigned_rider' => $this->retrieveNameOnly($data['rider'])
