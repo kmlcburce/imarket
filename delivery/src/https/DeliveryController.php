@@ -53,6 +53,15 @@ class DeliveryController extends APIController
     }
   }
 
+  public function getDeliveryName($column, $value){
+    $result = Delivery::where($column, '=', $value)->get();
+    if(sizeof($result) > 0){
+      return $this->retrieveNameOnly($result[0]['rider']);
+    }
+    return null;
+  }
+
+
   public function myDeliveries(Request $request){
     $data = $request->all();
     $this->model = new Delivery();
