@@ -55,6 +55,7 @@ class CheckoutController extends APIController
   public function retrieveOrders(Request $request){
     $data = $request->all();
     $this->model = new Checkout();
+    $this->retrieveDB($data);
     $result = $this->response['data'];
     if(sizeof($result) > 0){
       $i = 0;
