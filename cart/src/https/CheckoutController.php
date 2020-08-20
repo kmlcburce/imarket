@@ -58,7 +58,7 @@ class CheckoutController extends APIController
     $data['offset'] = isset($data['offset']) ? $data['offset'] : 0;
     $data['limit'] = isset($data['offset']) ? $data['limit'] : 5;
     $this->response['data'] = Checkout::select([
-                  DB::raw("SQL_CALC_FOUND_ROWS id")
+                  DB::raw("SQL_CALC_FOUND_ROWS *")
               ])
               ->where($data['condition'][0]['column'], $data['condition'][0]['clause'], $data['condition'][0]['value'])
               ->offset($data['offset'])
@@ -72,7 +72,7 @@ class CheckoutController extends APIController
         $this->response['data'][$i]['name'] = $this->retrieveNameOnly($key['account_id']);
         $this->response['data'][$i]['location'] = app($this->locationClass)->getAppenedLocationByParams('id', $key['location_id']);
         $this->response['data'][$i]['coupon'] = null;
-        // $this->response['data'][$i]['date'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
+        $this->response['data'][$i]['date'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
         $i++;
       }
     }
