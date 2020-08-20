@@ -36,6 +36,37 @@ class LocationController extends APIController
       }
     }
 
+    public function getLongLatDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371){
+      if (is_null($latitudeFrom) || is_null($longitudeFrom) || is_null($latitudeTo) || is_null($longitudeTo)) {
+        return null;
+      }
+      $latitudeFrom = floatval($latitudeFrom);
+      $longitudeFrom = floatval($longitudeFrom);
+      $latitudeTo = floatval($latitudeTo);
+      $longitudeTo = floatval($longitudeTo);
+      // convert from degrees to radians
+      $latFrom = deg2rad($latitudeFrom);
+      $lonFrom = deg2rad($longitudeFrom);
+      $latTo = deg2rad($latitudeTo);
+      $lonTo = deg2rad($longitudeTo);
+      $lonDelta = $lonTo - $lonFrom;
+      $a = pow(cos($latTo) * sin($lonDelta), 2) +
+        pow(cos($latFrom) * sin($latTo) - sin($latFrom) * cos($latTo) * cos($lonDelta), 2);
+      $b = sin($latFrom) * sin($latTo) + cos($latFrom) * cos($latTo) * cos($lonDelta);
+    
+      $angle = atan2(sqrt($a), $b);
+      return $angle * $earthRadius;
+    }
+
+    public function getDistanceFromMerchant($merchantId, $id){
+      $from = $this->getByParams('merchant_id', $merchantId);
+      $to = $this->getByParams('id', $id);
+      if($from && $to){
+        return $this->getLongLatDistance($from['latitude'], $from['longitude'], $to['latitude'], $to['longitude']);
+      }
+      return null;
+    }
+
     public function getLocationScope(Request $request){
       $scope = Location::select("code")
       ->where("id", $request["location_id"])
@@ -53,8 +84,9 @@ class LocationController extends APIController
       return sizeof($result) > 0 ? $result[0] : null;
     }
 
-    public function getAppenedLocationByParams($column, $value){
+    public function getAppenedLocationByParams($column, $value, $merchantId){
+      $distance = $this->getDistanceFromMerchant($merchantId, $value);
       $result = Location::where($column, '=', $value)->get();
-      return sizeof($result) > 0 ? $result[0]['route'].', '.$result[0]['locality']: null;
+      return sizeof($result) > 0 ? '('.$distance.'km)'.$result[0]['route'].', '.$result[0]['locality']: null;
     }
 }
