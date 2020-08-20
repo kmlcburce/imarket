@@ -21,7 +21,7 @@ class DeliveryController extends APIController
   public function create(Request $request){
     $data = $request->all();
     
-    if($this->exist($data['checkout_id']) == true){
+    if($this->getByParams('checkout_id', $data['checkout_id']) != null){
       $this->response['data'] = null;
       $this->response['error'] = 'Already exist';
       return $this->response();
@@ -42,6 +42,11 @@ class DeliveryController extends APIController
       Notifications::dispatch('rider', $array);
     }
     return $this->response();
+  }
+
+  public function getByParams($column, $value){
+    $result = Delivery::where($column, '=', $value)->get();
+    return sizeof($result) > 0 ? $result[0] : null;
   }
 
   public function generateCode(){
