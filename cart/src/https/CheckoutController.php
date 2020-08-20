@@ -55,50 +55,41 @@ class CheckoutController extends APIController
 
   public function summaryOfOrders(Request $request){
     $data = $request->all();
-    $completed = Checkout::where('created_at', '>=', $data['date'].'-01')
+    $results = Checkout::where('created_at', '>=', $data['date'].'-01')
                     ->where('created_at', '<=', $data['date'].'-31')
                     ->where('merchant_id', '=', $data['merchant_id'])
-                    ->groupBy('date')
+                    ->groupBy('date', 'status')
                     ->orderBy('date', 'ASC') // or ASC
                     ->get(array(
                         DB::raw('DATE(`created_at`) AS `date`'),
                         DB::raw('SUM(total) as `count`'),
                         'status'
                     ));
-    // $cancelled = Checkout::where('created_at', '>=', $data['date'].'-01')
-    //                 ->where('created_at', '<=', $data['date'].'-31')
-    //                 ->where('merchant_id', '=', $data['merchant_id'])
-    //                 ->where('status', '=', 'cancelled')
-    //                 ->groupBy('date')
-    //                 ->orderBy('date', 'ASC') // or ASC
-    //                 ->get(array(
-    //                     DB::raw('DATE(`created_at`) AS `date`'),
-    //                     DB::raw('SUM(total) as `count`')
-    //                 ));
-    // $completedSeries = array();
-    // $cancelledSeries = array();
-    // if(sizeof($result) > 0){
-    //   $numberOfDays = Carbon::createFromFormat('Y-m-d', $data['date'].'-01')->daysInMonth;
-    //   for ($i = 1; $i <= $numberOfDays; $i++) {
-    //     $newDate = $data['date'];
-    //     if($i < 10){
-    //       $newDate .= '0'.$i;
-    //     }else{
-    //       $newDate .=$i;
-    //     }
-    //     if($newDate == $)
-    //   }
-    // }
-    // $this->response['data'] = array(
-    //   array(
-    //     'name'  => 'Completed',
-    //     'data'  => $completed
-    //   ), array(
-    //     'name'  => 'Cancelled',
-    //     'data'  => $cancelled
-    // ));
+
+    $completedSeries = array();
+    $cancelledSeries = array();
+    $categories = array();
+
+    $numberOfDays = Carbon::createFromFormat('Y-m-d', $data['date'].'-01')->daysInMonth;
+    for ($i = 1; $i <= $numberOfDays; $i++) {
+      $completedSeries[] = 0;
+      $cancelledSeries[] = 0;
+      $categories[] = $i;
+    }
+
+    foreach ($results as $key) {
+      $index = intvat(substr($key->date, 7, 2) - 1);
+      if($key->status == 'completed'){
+        $completedSeries[$index] = $key->total
+      }else if($key->status == 'cancelled'){
+        $cancelledSeries[$index] = $key->total
+      }
+    }
+    
     $this->response['data'] = array(
-      'completed' => $completed
+      'completed' => $completedSeries,
+      'cancelled' => $cancelledSeries,
+      'categories' => $categories
     );
     return $this->response();;
   }
