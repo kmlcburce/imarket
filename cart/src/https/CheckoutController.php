@@ -58,7 +58,7 @@ class CheckoutController extends APIController
     $completed = Checkout::where('created_at', '>=', $data['date'].'-01')
                     ->where('created_at', '<=', $data['date'].'-31')
                     ->where('merchant_id', '=', $data['merchant_id'])
-                    ->groupBy('date', 'status')
+                    ->groupBy('date')
                     ->orderBy('date', 'ASC') // or ASC
                     ->get(array(
                         DB::raw('DATE(`created_at`) AS `date`'),
