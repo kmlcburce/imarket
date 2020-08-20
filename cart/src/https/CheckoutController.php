@@ -12,7 +12,6 @@ use Increment\Imarket\Product\Models\Pricing;
 use Increment\Imarket\Payment\Models\StripeWebhook;
 use Carbon\Carbon;
 use App\Jobs\Notifications;
-use Illuminate\Support\Facades\DB;
 
 class CheckoutController extends APIController
 {
@@ -55,20 +54,7 @@ class CheckoutController extends APIController
 
   public function retrieveOrders(Request $request){
     $data = $request->all();
-    $data['offset'] = isset($data['offset']) ? $data['offset'] : 0;
-    $data['limit'] = isset($data['offset']) ? $data['limit'] : 5;
-    $this->response['data'] = DB::table('checkouts as T1')
-              ->select([
-                  DB::raw("SQL_CALC_FOUND_ROWS id")
-              ])
-              ->select('T1.*')
-              ->where($data['condition'][0]['column'], $data['condition'][0]['clause'], $data['condition'][0]['value'])
-              ->offset($data['offset'])
-              ->limit($data['limit'])
-              ->orderBy($data['sort']['column'], $data['sort']['value'])
-              ->get();
-    $this->response['size'] = DB::select("SELECT FOUND_ROWS() as `rows`")[0]->rows;
-    $this->response['data'] = json_decode($this->response['data'], true);
+    $this->model = new Checkout();
     $result = $this->response['data'];
     if(sizeof($result) > 0){
       $i = 0;
@@ -80,7 +66,7 @@ class CheckoutController extends APIController
         $i++;
       }
     }
-    
+    $this->response['size'] = Checkout::where($data['condition'][0]['column'], $data['condition'][0]['clause'], $data['condition'][0]['value'])->count();
     return $this->response();
   }
 
