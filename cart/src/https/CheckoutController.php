@@ -62,7 +62,7 @@ class CheckoutController extends APIController
       $i = 0;
       foreach ($result as $key) {
         $this->response['data'][$i]['name'] = $this->retrieveNameOnly($result[$i]['account_id']);
-        $locations = app($this->locationClass)->getAndManageLocation('id', $data['location_id'], $data['merchant_id']);
+        $locations = app($this->locationClass)->getAndManageLocation('id', $result[$i]['location_id'], $result[$i]['merchant_id']);
         $this->response['data'][$i]['merchant_location'] = $locations['merchant_location'];
         $this->response['data'][$i]['location'] = $locations['location'];
         $this->response['data'][$i]['distance'] = $locations['distance'];
