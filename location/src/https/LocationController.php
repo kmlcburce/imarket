@@ -102,12 +102,12 @@ class LocationController extends APIController
     public function getAndManageLocation($column, $value, $merchantId){
       $from = $this->getByParams('merchant_id', $merchantId);
       $to = $this->getByParams($column, $value);
-      $distance = null;
+      $distance = 0;
 
       if($to){
 
         if($from){
-          $distance = $this->getLongLatDistance($from['latitude'], $from['longitude'], $to['latitude'], $to['longitude']) .' km';
+          $distance = $this->getLongLatDistance($from['latitude'], $from['longitude'], $to['latitude'], $to['longitude']);
           $distance = round($distance, 1);
         }
 
@@ -115,7 +115,7 @@ class LocationController extends APIController
       return array(
         'merchant_location' => $from,
         'location'          => $to,
-        'distance'          => $distance,
+        'distance'          => $distance.' km',
       );
     }
 }
