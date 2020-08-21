@@ -80,7 +80,7 @@ class DeliveryController extends APIController
         $checkout = app($this->checkoutClass)->getByParams('id', $key['checkout_id']);
         $this->response['data'][$i]['checkout'] = null;
         if($checkout){
-          $this->response['data'][$i]['checkout'] = $array(
+          $this->response['data'][$i]['checkout'] = array(
             'id'  => $checkout['id'],
             'order_number'  => $checkout['order_number'],
             'currency'  => $checkout['currency'],
