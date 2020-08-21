@@ -53,6 +53,25 @@ class CheckoutController extends APIController
     return $this->response();
   }
 
+  public function retrieveByRider(Request $request){
+    $data = $request->all();
+    $this->model = new Checkout();
+    $this->retrieveDB($data);
+    $result = $this->response['data'];
+    if(sizeof($result) > 0){
+      $i = 0;
+      foreach ($result as $key) {
+        $this->response['data'][$i]['name'] = $this->retrieveNameOnly($result[$i]['account_id']);
+        $locations = app($this->locationClass)->getAndManageLocation('id', $data['location_id'], $data['merchant_id']);
+        $this->response['data'][$i]['merchant_location'] = $locations['merchant_location'];
+        $this->response['data'][$i]['location'] = $locations['location'];
+        $this->response['data'][$i]['distance'] = $locations['distance'];
+        $i++;
+      }
+    }
+    return $this->response();
+  }
+
   public function summaryOfDailyOrders(Request $request){
     $data = $request->all();
 

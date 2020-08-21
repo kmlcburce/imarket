@@ -8,6 +8,7 @@ Route::post($route.'retrieve', $controller."retrieve");
 Route::post($route.'retrieve_orders', $controller."retrieveOrders");
 Route::post($route.'summary_of_orders', $controller."summaryOfOrders");
 Route::post($route.'summary_of_daily_orders', $controller."summaryOfDailyOrders");
+Route::post($route.'retrieve_by_rider', $controller."retrieveByRider");
 Route::post($route.'update', $controller."update");
 Route::post($route.'delete', $controller."delete");
 Route::get($route.'test', $controller."test");
