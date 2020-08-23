@@ -27,7 +27,7 @@ class MerchantController extends APIController
   }
 
   public function generateCode(){
-    $code = substr(str_shuffle("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 32);
+    $code = 'mer_'.substr(str_shuffle($this->codeSource), 0, 60);
     $codeExist = Merchant::where('id', '=', $code)->get();
     if(sizeof($codeExist) > 0){
       $this->generateCode();

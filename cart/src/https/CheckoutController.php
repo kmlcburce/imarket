@@ -21,6 +21,8 @@ class CheckoutController extends APIController
   public $cartClass = 'Increment\Imarket\Cart\Http\CartController';
   public $checkoutItemClass = 'Increment\Imarket\Cart\Http\CheckoutItemController';
   public $merchantClass = 'Increment\Imarket\Merchant\Http\MerchantController';
+  public $locationClass = 'Increment\Imarket\Location\Http\LocationController';
+  public $accountClass = 'Increment\Imarket\Location\Http\LocationController';
 
   function __construct(){
   	$this->model = new Checkout();
@@ -30,7 +32,8 @@ class CheckoutController extends APIController
       'order_number',
       'payment_type',
       'payment_payload',
-      'payment_payload_value'
+      'payment_payload_value',
+      'notes'
     );
   }
 
@@ -57,8 +60,8 @@ class CheckoutController extends APIController
     if(sizeof($result) > 0){
       $i = 0;
       foreach ($result as $key) {
-        $this->response['data'][$i]['name'] = null;
-        $this->response['data'][$i]['location'] = null;
+        $this->response['data'][$i]['name'] = $this->retrieveNameOnly($key['account_id']);
+        $this->response['data'][$i]['location'] = app($this->locationClass)->getAppenedLocationByParams('id', $key['location_id']);
         $this->response['data'][$i]['coupon'] = null;
         $this->response['data'][$i]['date'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
         $i++;
@@ -72,6 +75,7 @@ class CheckoutController extends APIController
     $prefix = app($this->merchantClass)->getByParamsReturnByParam('id', $data['merchant_id'], 'prefix');
     $counter = Checkout::where('merchant_id', '=', $data['merchant_id'])->count();
     $data['order_number'] = $prefix ? $prefix.$this->toCode($counter) : $this->toCode($counter);
+    $data['code'] = $this->generateCode();
     $this->model = new Checkout();
     $this->insertDB($data);
     if($this->response['data'] > 0){
@@ -99,10 +103,10 @@ class CheckoutController extends APIController
         app($this->checkoutItemClass)->insertInArray($items);
         app($this->cartClass)->emptyItems($data['account_id']);
 
-        $data['merchant_account_id'] = null;
+        $data['merchant'] = null;
         $merchant = Merchant::select('account_id')->where('id', '=', $data['merchant_id'])->get();
         if (sizeof($merchant) > 0) {
-          $data['merchant_account_id'] = $merchant[0]['account_id'];
+          $data['merchant'] = $merchant[0]['code'];
         }
         Notifications::dispatch('orders', $data);
       }
@@ -115,6 +119,12 @@ class CheckoutController extends APIController
     $length = strlen((string)$size);
     $code = '00000000';
     return substr_replace($code, $size, intval(7 - $length));
+  }
+
+  
+  public function getByParamsReturnByParam($column, $value, $param){
+    $result = Checkout::where($column, '=', $value)->get();
+    return sizeof($result) > 0 ? $result[0][$param] : null;
   }
 
   public function getByParams($column, $value){
