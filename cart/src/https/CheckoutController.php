@@ -144,6 +144,7 @@ class CheckoutController extends APIController
     if(sizeof($result) > 0){
       $i = 0;
       foreach ($result as $key) {
+        $this->response['data'][$i]['tendered_amount'] =  $key['tendered_amount'] == null ? 0 :  doubleval($key['tendered_amount']);
         $change =  $key['tendered_amount'] != null ? doubleval($key['tendered_amount']) - doubleval($key['total']) : 0;
         $this->response['data'][$i]['name'] = $this->retrieveNameOnly($key['account_id']);
         $this->response['data'][$i]['location'] = app($this->locationClass)->getAppenedLocationByParams('id', $key['location_id'], $key['merchant_id']);
