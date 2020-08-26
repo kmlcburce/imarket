@@ -12,9 +12,9 @@ class LocationController extends APIController
     //
     function __construct(){
       $this->model = new Location();
-      // $this->notRequired = array(
-      //     'name', 'address', 'prefix', 'logo', 'website', 'email'
-      // );
+      $this->notRequired = array(
+          'code'
+      );
     }
     
     public function addLocationScope(Request $request){
