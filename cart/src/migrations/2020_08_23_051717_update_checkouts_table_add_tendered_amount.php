@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class UpdateCheckoutTableAddTenderedAmountAndChange extends Migration
+class UpdateCheckoutTableAddTenderedAmount extends Migration
 {
     /**
      * Run the migrations.
@@ -15,7 +15,7 @@ class UpdateCheckoutTableAddTenderedAmountAndChange extends Migration
     {   
         //
         Schema::table('checkouts', function (Blueprint $table) {
-            $table->double('tendered_amount')->nullable()->after('total');
+            $table->double('tendered_amount', 8, 2)->nullable()->after('total');
           });
     }
 
