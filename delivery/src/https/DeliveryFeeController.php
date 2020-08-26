@@ -5,7 +5,7 @@ namespace Increment\Imarket\Delivery\Http;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
-use Increment\Imarket\Delivery\Models\DeliveryFees;
+use Increment\Imarket\Delivery\Models\DeliveryFee;
 use Carbon\Carbon;
 class DeliveryController extends APIController
 {
