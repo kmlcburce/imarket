@@ -12,7 +12,7 @@ Route::get($route.'test', $controller."test");
 
 // Delivery Fees
 $route = env('PACKAGE_ROUTE', '').'/delivery_fees/';
-$controller = 'Increment\Imarket\Delivery\Http\DeliveryController@';
+$controller = 'Increment\Imarket\Delivery\Http\DeliveryFeeController@';
 Route::post($route.'create', $controller."create");
 Route::post($route.'retrieve', $controller."retrieve");
 Route::post($route.'update', $controller."update");
