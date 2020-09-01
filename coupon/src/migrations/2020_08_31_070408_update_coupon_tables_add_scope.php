@@ -15,7 +15,7 @@ class UpdateCouponTablesAddScope extends Migration
     {
         //
         Schema::table('coupons', function (Blueprint $table) {
-            $table->string('scope')->after('account_id');
+            $table->string('scope')->after('account_id')->nullable();
           });
     }
 
