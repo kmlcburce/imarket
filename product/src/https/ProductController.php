@@ -64,6 +64,15 @@ class ProductController extends APIController
       $this->model = new Product();
       $this->retrieveDB($data);
       $this->response['data'] = $this->manageResultBasic($this->response['data'], null, $inventoryType);
+      
+      if(sizeof($data['condition']) == 2){
+        $condition = $data['condition'];
+        $this->response['size'] = Product::where($condition[0]['column'], $condition[0]['clause'], $condition[0]['value'])->where($condition[1]['column'], $condition[1]['clause'], $condition[1]['value'])->count();
+      }else if(sizeof($data['condition']) == 1){
+        $condition = $data['condition'];
+        $this->response['size'] = Product::where($condition[0]['column'], $condition[0]['clause'], $condition[0]['value'])->count();
+      }
+      
       return $this->response();
     }
 

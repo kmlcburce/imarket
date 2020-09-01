@@ -12,6 +12,7 @@ use Increment\Imarket\Product\Models\Pricing;
 use Increment\Imarket\Payment\Models\StripeWebhook;
 use Carbon\Carbon;
 use App\Jobs\Notifications;
+use Illuminate\Support\Facades\DB;
 
 class CheckoutController extends APIController
 {
@@ -22,7 +23,7 @@ class CheckoutController extends APIController
   public $checkoutItemClass = 'Increment\Imarket\Cart\Http\CheckoutItemController';
   public $merchantClass = 'Increment\Imarket\Merchant\Http\MerchantController';
   public $locationClass = 'Increment\Imarket\Location\Http\LocationController';
-  public $accountClass = 'Increment\Imarket\Location\Http\LocationController';
+  public $deliveryClass = 'Increment\Imarket\Delivery\Http\DeliveryController';
 
   function __construct(){
   	$this->model = new Checkout();
@@ -52,6 +53,104 @@ class CheckoutController extends APIController
     return $this->response();
   }
 
+  public function retrieveByRider(Request $request){
+    $data = $request->all();
+    $this->model = new Checkout();
+    $this->retrieveDB($data);
+    $result = $this->response['data'];
+    if(sizeof($result) > 0){
+      $i = 0;
+      foreach ($result as $key) {
+        $this->response['data'][$i]['name'] = $this->retrieveNameOnly($result[$i]['account_id']);
+        $locations = app($this->locationClass)->getAndManageLocation('id', $result[$i]['location_id'], $result[$i]['merchant_id']);
+        $this->response['data'][$i]['merchant_location'] = $locations['merchant_location'];
+        $this->response['data'][$i]['location'] = $locations['location'];
+        $this->response['data'][$i]['distance'] = $locations['distance'];
+        $i++;
+      }
+    }
+    return $this->response();
+  }
+
+  public function summaryOfDailyOrders(Request $request){
+    $data = $request->all();
+
+    $results = Checkout::where('created_at', '>=', $data['date'].' 00:00:00')
+                    ->where('created_at', '<=', $data['date'].' 23:59:59')
+                    ->where('merchant_id', '=', $data['merchant_id'])
+                    ->groupBy('status')
+                    ->get(array(
+                        DB::raw('SUM(total) as `total`'),
+                        'status'
+                    ));
+
+    $this->response['data'] = $results;
+    return $this->response();;
+  }
+
+
+  public function summaryOfInventory(Request $request){
+    $data = $request->all();
+    $results = CheckoutItem::where('created_at', '>=', $data['date'].'-01')
+                ->where('created_at', '<=', $data['date'].'-31')
+                ->where('merchant_id', '=', $data['merchant_id'])
+                ->groupBy('date' , 'status')
+                ->orderBy('date' , 'ASC')
+                ->get(array(
+                  DB::raw('DATE(`created_at`) AS `date`'),
+                  DB::raw('SUM(total) as `total`'), 'status'
+                ));
+    $this->response['data'] = $results;
+    return $this->response();
+  }
+
+  public function summaryOfOrders(Request $request){
+    $data = $request->all();
+    $results = Checkout::where('created_at', '>=', $data['date'].'-01')
+                    ->where('created_at', '<=', $data['date'].'-31')
+                    ->where('merchant_id', '=', $data['merchant_id'])
+                    ->groupBy('date', 'status')
+                    ->orderBy('date', 'ASC') // or ASC
+                    ->get(array(
+                        DB::raw('DATE(`created_at`) AS `date`'),
+                        DB::raw('SUM(total) as `total`'),
+                        'status'
+                    ));
+
+    $completedSeries = array();
+    $cancelledSeries = array();
+    $categories = array();
+
+    $numberOfDays = Carbon::createFromFormat('Y-m-d', $data['date'].'-01')->daysInMonth;
+    for ($i = 1; $i <= $numberOfDays; $i++) {
+      $completedSeries[] = 0;
+      $cancelledSeries[] = 0;
+      $categories[] = $i;
+    }
+
+    foreach ($results as $key) {
+      $index = intval(substr($key->date, 8)) - 1;
+      // echo $key->date.'/'.$index;
+      if($key->status == 'completed'){
+        $completedSeries[$index] = $key->total;
+      }else if($key->status == 'cancelled'){
+        $cancelledSeries[$index] = $key->total;
+      }
+    }
+
+    $this->response['data'] = array(
+      'series' => array(array(
+        'name'  => 'Completed',
+        'data'  => $completedSeries
+      ), array(
+        'name'  => 'Cancelled',
+        'data'  => $cancelledSeries
+      )),
+      'categories' => $categories
+    );
+    return $this->response();;
+  }
+
   public function retrieveOrders(Request $request){
     $data = $request->all();
     $this->model = new Checkout();
@@ -60,13 +159,18 @@ class CheckoutController extends APIController
     if(sizeof($result) > 0){
       $i = 0;
       foreach ($result as $key) {
+        $this->response['data'][$i]['tendered_amount'] =  $key['tendered_amount'] == null ? 0 :  doubleval($key['tendered_amount']);
+        $change =  $key['tendered_amount'] != null ? doubleval($key['tendered_amount']) - doubleval($key['total']) : 0;
         $this->response['data'][$i]['name'] = $this->retrieveNameOnly($key['account_id']);
-        $this->response['data'][$i]['location'] = app($this->locationClass)->getAppenedLocationByParams('id', $key['location_id']);
+        $this->response['data'][$i]['location'] = app($this->locationClass)->getAppenedLocationByParams('id', $key['location_id'], $key['merchant_id']);
+        $this->response['data'][$i]['assigned_rider'] = app($this->deliveryClass)->getDeliveryName('checkout_id', $key['id']);
+        $this->response['data'][$i]['change'] = $change;
         $this->response['data'][$i]['coupon'] = null;
         $this->response['data'][$i]['date'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
         $i++;
       }
     }
+    $this->response['size'] = Checkout::where($data['condition'][0]['column'], $data['condition'][0]['clause'], $data['condition'][0]['value'])->count();
     return $this->response();
   }
 

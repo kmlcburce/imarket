@@ -15,7 +15,7 @@ class UpdateCheckoutsTableDropTenderedAmountAndChange extends Migration
     {
         //
         Schema::table('checkouts', function (Blueprint $table){
-            $table->dropColumn(['tendered_amount', 'change']);
+            $table->dropColumn(['tendered_amount']);
         });
     }
 
