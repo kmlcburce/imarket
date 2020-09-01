@@ -15,7 +15,7 @@ class UpdateDeliveryFeesTableAddEffectiveDate extends Migration
     {
         //
         Schema::table('delivery_fees', function (Blueprint $table){
-            $table->dateTime('effective_date')->after("currency");
+            $table->dateTime('effective_date')->after("currency")->nullable();
         });
     }
 
