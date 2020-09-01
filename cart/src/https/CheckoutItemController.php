@@ -45,6 +45,21 @@ class CheckoutItemController extends APIController
         return $this->response();
     }
 
+    public function summaryOfInventory(Request $request){
+        $data = $request->all();
+        $results = CheckoutItem::where('created_at', '>=', $data['date'].'-01')
+                    ->where('created_at', '<=', $data['date'].'-31')
+                    ->where('merchant_id', '=', $data['merchant_id'])
+                    ->groupBy('date' , 'status')
+                    ->orderBy('date' , 'ASC')
+                    ->get(array(
+                      DB::raw('DATE(`created_at`) AS `date`'),
+                      DB::raw('SUM(total) as `total`'), 'status'
+                    ));
+        $this->response['data'] = $results;
+        return $this->response();
+      }
+
     public function getByParams($column, $value){
         $result = Checkout::where($column, '=', $value)->get();
         return sizeof($result) > 0 ? $result[0] : null;
