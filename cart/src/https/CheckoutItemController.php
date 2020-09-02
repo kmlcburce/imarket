@@ -7,6 +7,7 @@ use App\Http\Controllers\APIController;
 use Increment\Imarket\Cart\Models\CheckoutItem;
 use Increment\Imarket\Cart\Models\Checkout;
 use App\CheckoutTemplate;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 class CheckoutItemController extends APIController
 {
@@ -45,6 +46,39 @@ class CheckoutItemController extends APIController
         return $this->response();
     }
 
+    public function summaryOfInventory(Request $request){
+        $data = $request->all();
+        $results = CheckoutItem::where('created_at', '>=', $data['date'].'-01')
+                    ->where('created_at', '<=', $data['date'].'-31')
+                    ->where('account_id', '=', $data['merchant_id'])
+                    ->orderBy('created_at' , 'ASC')
+                    ->get();
+        $this->response['data'] = $results;
+        //get number of checkouts on the spec date
+        $results1 = Checkout::where('created_at', '>=', $data['date'].'-01')
+                    ->where('created_at', '<=', $data['date'].'-31')
+                    ->where('merchant_id', '=', $data['merchant_id'])
+                    ->orderBy('created_at', 'ASC')
+                    ->get();
+        $last = 0;
+        for ($i=0; $i <= count($results1)-1; $i++){
+            $products = [];
+            for ($x=0; $x <=count($results)-2; $x++){
+                $productitems = [];
+                if ($results1[$i]['id'] == $results[$last]['checkout_id']){
+                    $last = $last + 1;
+                    array_push($productitems, $results[$last]);
+                }else{
+                    $last = $x;
+                    break;
+                }
+                array_push($products, $productitems);
+            }
+            $results1[$i]["products"] = $products;
+        }
+        return $results1;
+    }
+    
     public function getByParams($column, $value){
         $result = Checkout::where($column, '=', $value)->get();
         return sizeof($result) > 0 ? $result[0] : null;
