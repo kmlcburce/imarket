@@ -88,22 +88,6 @@ class CheckoutController extends APIController
     return $this->response();;
   }
 
-
-  public function summaryOfInventory(Request $request){
-    $data = $request->all();
-    $results = CheckoutItem::where('created_at', '>=', $data['date'].'-01')
-                ->where('created_at', '<=', $data['date'].'-31')
-                ->where('merchant_id', '=', $data['merchant_id'])
-                ->groupBy('date' , 'status')
-                ->orderBy('date' , 'ASC')
-                ->get(array(
-                  DB::raw('DATE(`created_at`) AS `date`'),
-                  DB::raw('SUM(total) as `total`'), 'status'
-                ));
-    $this->response['data'] = $results;
-    return $this->response();
-  }
-
   public function summaryOfOrders(Request $request){
     $data = $request->all();
     $results = Checkout::where('created_at', '>=', $data['date'].'-01')
@@ -180,6 +164,9 @@ class CheckoutController extends APIController
     $counter = Checkout::where('merchant_id', '=', $data['merchant_id'])->count();
     $data['order_number'] = $prefix ? $prefix.$this->toCode($counter) : $this->toCode($counter);
     $data['code'] = $this->generateCode();
+    $distance = app('Increment\Imarket\Location\Http\LocationController')->getLongLatDistance($data['latFrom'], $data['longFrom'], $data['latTo'], $data['longTo']);
+    $distanceCalc = intdiv($distance, 1);
+    $data['shipping_fee'] = ($distanceCalc * 10) + 8;
     $this->model = new Checkout();
     $this->insertDB($data);
     if($this->response['data'] > 0){
