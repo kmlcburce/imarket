@@ -79,7 +79,7 @@ class MerchantController extends APIController
 
   public function updateByVerification(Request $request){
     $data = $request->all();
-    $result = Account::where('account_id', '=', $data['account_id'])->update(array(
+    $result = Merchant::where('account_id', '=', $data['account_id'])->update(array(
       'status' => $data['status']
     ));
     $this->response['data'] = $result ? true : false;
