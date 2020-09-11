@@ -54,7 +54,6 @@ class CheckoutItemController extends APIController
                     ->orderBy('date' , 'ASC')
                     ->get(array(
                       DB::raw('DATE(`created_at`) AS `date`'),
-                      DB::raw('SUM(total) as `total`'), 'status'
                     ));
         $this->response['data'] = $results;
         return $this->response();
