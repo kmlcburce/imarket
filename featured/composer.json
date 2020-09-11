@@ -1,0 +1,26 @@
+{
+    "name": "user/featured",
+    "description": "Featured Products",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ean Velayo",
+            "email": "ecvelayo@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Increment\\Imarket\\Featured": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Increment\\Imarket\\Featured\\FeaturedServiceProvider"
+            ]
+        }
+    }
+}

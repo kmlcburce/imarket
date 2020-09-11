@@ -29,6 +29,7 @@ class DeliveryController extends APIController
 
     $data['code'] = $this->generateCode();
     $data['status'] = 'pending';
+    $data['amount'] = $data['delivery_fee'] + getPerformanceBonus($data["total"]) + 15;
     $this->model = new Delivery();
     $this->insertDB($data);
 
@@ -43,6 +44,22 @@ class DeliveryController extends APIController
       Notifications::dispatch('rider', $array);
     }
     return $this->response();
+  }
+
+  public function getPerformanceBonus($total){
+    if ($total > 0 && $total < 300){
+      return 0;
+    }else if ($total >= 300 && $total < 1000){
+      return (($total*0.20)*0.40)-15;
+    }else if ($total >= 1000 && $total < 2000){
+      return (($total*0.20)*0.35)-15;
+    }else if ($total >= 2000 && $total < 3000){
+      return (($total*0.20)*0.30)-15;
+    }else if ($total >= 3000 && $total < 4000){
+      return (($total*0.20)*0.25)-15;
+    }else if ($total >= 4000 && $total < 5000){
+      return (($total*0.20)*0.20)-15;
+    }
   }
 
   public function getByParams($column, $value){
@@ -68,6 +85,12 @@ class DeliveryController extends APIController
     return null;
   }
 
+  public function getDeliveryFee(Request $request){
+    $data = $request->all();
+    $distance = app('Increment\Imarket\Location\Http\LocationController')->getLongLatDistance($data['latFrom'], $data['longFrom'], $data['latTo'], $data['longTo']);
+    $distanceCalc = intdiv($distance, 1);
+    return ($distanceCalc * 10) + 8;
+  }
 
   public function myDeliveries(Request $request){
     $data = $request->all();

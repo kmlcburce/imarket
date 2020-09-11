@@ -9,6 +9,7 @@ class CouponController extends APIController
 {
    	function __construct(){
    		$this->model = new Coupon();
+   		$this->notRequired = array('scope');
    	}
 
    	public function getCoupon($id){
