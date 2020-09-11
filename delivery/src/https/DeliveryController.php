@@ -8,6 +8,7 @@ use App\Http\Controllers\APIController;
 use Increment\Imarket\Delivery\Models\Delivery;
 use Carbon\Carbon;
 use App\Jobs\Notifications;
+use Illuminate\Support\Facades\DB;
 class DeliveryController extends APIController
 {
   public $locationClass = 'Increment\Imarket\Location\Http\LocationController';
