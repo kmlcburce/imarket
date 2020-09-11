@@ -77,9 +77,8 @@ class DeliveryController extends APIController
     }
   }
 
-  public function summaryOfDailySummary(Request $request){
+  public function dailySummary(Request $request){
     $data = $request->all();
-
     $results = Delivery::where('created_at', '>=', $data['date'].' 00:00:00')
                     ->where('created_at', '<=', $data['date'].' 23:59:59')
                     ->where('rider', '=', $data['rider'])
