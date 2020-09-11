@@ -50,12 +50,9 @@ class CheckoutItemController extends APIController
         $data = $request->all();
         $results = CheckoutItem::where('created_at', '>=', $data['date'].'-01')
                     ->where('created_at', '<=', $data['date'].'-31')
-                    ->where('merchant_id', '=', $data['merchant_id'])
-                    ->groupBy('date')
-                    ->orderBy('date' , 'ASC')
-                    ->get(array(
-                      DB::raw('DATE(`created_at`) AS `date`'),
-                    ));
+                    ->where('account_id', '=', $data['account_id'])
+                    ->orderBy('created_at' , 'ASC')
+                    ->get();
         $this->response['data'] = $results;
         //get number of checkouts on the spec date
         $results1 = Checkout::where('created_at', '>=', $data['date'].'-01')
