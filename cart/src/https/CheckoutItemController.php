@@ -46,6 +46,31 @@ class CheckoutItemController extends APIController
         return $this->response();
     }
 
+    public function summaryOfInventoryDaily(Request $request){
+        $data = $request->all();
+        $results = DB::table('checkout_items AS T1')
+                    ->join('checkouts AS T2', 'T2.id', '=', 'T1.checkout_id')
+                    ->join('products AS T3', 'T3.id', '=', 'T1.payload_value')
+                    ->where('T2.created_at', '>=', $data['date'].' 00:00:00')
+                    ->where('T2.created_at', '<=', $data['date'].' 23:59:59')
+                    ->where('T2.merchant_id', '=', $data['merchant_id'])
+                    ->get(array(
+                        'T1.*',
+                        'T2.merchant_id',
+                        'T2.order_number',
+                        'T2.sub_total',
+                        'T2.tax',
+                        'T2.discount',
+                        'T2.total',
+                        'T2.tendered_amount',
+                        'T2.currency',
+                        'T3.title'
+                    ));
+
+        $this->response['data'] = $results->groupBy('product_id');
+
+        return $this->response();
+    }
     public function summaryOfInventory(Request $request){
         $data = $request->all();
         $results = CheckoutItem::where('created_at', '>=', $data['date'].'-01')
