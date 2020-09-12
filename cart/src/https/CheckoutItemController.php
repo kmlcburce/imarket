@@ -67,7 +67,7 @@ class CheckoutItemController extends APIController
                         'T3.title'
                     ));
 
-        $this->response['data'] = $results->groupBy('product_id');
+        $this->response['data'] = $results->groupBy('order_number');
 
         return $this->response();
     }
