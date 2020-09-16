@@ -8,6 +8,7 @@ use App\Http\Controllers\APIController;
 use Increment\Imarket\Delivery\Models\Delivery;
 use Carbon\Carbon;
 use App\Jobs\Notifications;
+use Illuminate\Support\Facades\DB;
 class DeliveryController extends APIController
 {
   public $locationClass = 'Increment\Imarket\Location\Http\LocationController';
@@ -75,6 +76,68 @@ class DeliveryController extends APIController
     }else{
       return $code;
     }
+  }
+
+  public function dailySummary(Request $request){
+    $data = $request->all();
+    $results = Delivery::where('created_at', '>=', $data['date'].' 00:00:00')
+                    ->where('created_at', '<=', $data['date'].' 23:59:59')
+                    ->where('rider', '=', $data['rider'])
+                    ->groupBy('status')
+                    ->get(array(
+                        DB::raw('SUM(amount) as `total`'),
+                        'status'
+                    ));
+
+    $this->response['data'] = $results;
+    return $this->response();;
+  }
+
+  public function monthlySummary(Request $request){
+    $data = $request->all();
+    $results = Delivery::where('created_at', '>=', $data['date'].'-01')
+                    ->where('created_at', '<=', $data['date'].'-31')
+                    ->where('rider', '=', $data['rider'])
+                    ->groupBy('date', 'status')
+                    ->orderBy('date', 'ASC') // or ASC
+                    ->get(array(
+                        DB::raw('DATE(`created_at`) AS `date`'),
+                        DB::raw('SUM(amount) as `total`'),
+                        'status'
+                    ));
+
+    $completedSeries = array();
+    $cancelledSeries = array();
+    $categories = array();
+
+    $numberOfDays = Carbon::createFromFormat('Y-m-d', $data['date'].'-01')->daysInMonth;
+    for ($i = 1; $i <= $numberOfDays; $i++) {
+      $completedSeries[] = 0;
+      $cancelledSeries[] = 0;
+      $categories[] = $i;
+    }
+
+    foreach ($results as $key) {
+      $index = intval(substr($key->date, 8)) - 1;
+      // echo $key->date.'/'.$index;
+      if($key->status == 'completed'){
+        $completedSeries[$index] = $key->total;
+      }else if($key->status == 'cancelled'){
+        $cancelledSeries[$index] = $key->total;
+      }
+    }
+
+    $this->response['data'] = array(
+      'series' => array(array(
+        'name'  => 'Completed',
+        'data'  => $completedSeries
+      ), array(
+        'name'  => 'Cancelled',
+        'data'  => $cancelledSeries
+      )),
+      'categories' => $categories
+    );
+    return $this->response();;
   }
 
   public function getDeliveryName($column, $value){

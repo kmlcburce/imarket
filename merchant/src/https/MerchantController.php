@@ -77,6 +77,15 @@ class MerchantController extends APIController
     return $this->response();
   }
 
+  public function updateByVerification(Request $request){
+    $data = $request->all();
+    $result = Merchant::where('account_id', '=', $data['account_id'])->update(array(
+      'status' => $data['status']
+    ));
+    $this->response['data'] = $result ? true : false;
+    return $this->response();
+  }
+
   public function getOrderNumber($accountId){
     $account = Merchant::where('id', '=', $accountId)->first();
     if($account){

@@ -34,6 +34,7 @@ class DeliveryFeeController extends APIController
         return $this->response();
     }
 
+<<<<<<< HEAD
     public function retrieve(Request $request){
       $this->rawRequest = $request;
       if($this->checkAuthenticatedUser() == false){
@@ -42,5 +43,24 @@ class DeliveryFeeController extends APIController
 
       $this->retrieveDB($request->all());
       return $this->response();
+=======
+      public function retrieve(Request $request)
+    {
+      $this->rawRequest = $request;
+      $data = $request->all();
+      if (Cache::has('deliveryfee'.$request['scope'])){
+        return Cache::get('deliveryfee'.$request['scope']);
+      }else{
+        $this->retrieveDB($data);
+        $lifespan = Carbon::now()->addMinutes(3600);
+        $keyname = "deliveryfee".$request['scope'];
+        $charges = DeliveryFee::where('code', '=', $data['code'])->get();
+        if (sizeof($charges)>0){
+          Cache::add($keyname, $charges, $lifespan);
+          return $this->response();
+        }
+      }
+>>>>>>> 1ee9f453d0b6ba3e3ac9decaa3fdb018c39ce982
     }
 }
+

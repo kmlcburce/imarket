@@ -12,8 +12,8 @@ class ProductController extends APIController
     public $productAttrController = 'Increment\Imarket\Product\Http\ProductAttributeController';
     public $productPricingController = 'Increment\Imarket\Product\Http\PricingController';
     public $wishlistController = 'Increment\Imarket\Wishlist\Http\WishlistController';
-    public $checkoutController = 'Increment\Imarket\Cart\Http\CheckoutController';
-    public $checkoutItemController = 'Increment\Imarket\Cart\Http\CheckoutItemController';
+    // public $checkoutController = 'Increment\Imarket\Cart\Http\CheckoutController';
+    // public $checkoutItemController = 'Increment\Imarket\Cart\Http\CheckoutItemController';
     public $inventoryController = 'Increment\Imarket\Product\Http\ProductInventoryController';
     public $productTraceController = 'Increment\Imarket\Trace\Http\ProductTraceController';
     public $merchantController = 'Increment\Imarket\Merchant\Http\MerchantController';
@@ -77,9 +77,10 @@ class ProductController extends APIController
     }
 
     public function getRemainingQty($id){
-      $issued = intval(app($this->checkoutItemController)->getQty('product', $id));
+      // $issued = intval(app($this->checkoutItemController)->getQty('product', $id));
       $total = intval(app($this->inventoryController)->getQty($id));
-      return $total - $issued;
+      // return $total - $issued;
+      return $total;
     }
 
     public function retrieveProductById($id, $accountId, $inventoryType = null){
@@ -183,7 +184,7 @@ class ProductController extends APIController
           $result[$i]['bundled_settings'] = app($this->bundledSettingController)->getByParams('bundled', $result[$i]['id']);
           if($accountId !== null){
             $result[$i]['wishlist_flag'] = app($this->wishlistController)->checkWishlist($result[$i]['id'], $accountId);
-            $result[$i]['checkout_flag'] = app($this->checkoutController)->checkCheckout($result[$i]['id'], $accountId); 
+            // $result[$i]['checkout_flag'] = app($this->checkoutController)->checkCheckout($result[$i]['id'], $accountId); 
           }
           $result[$i]['inventories'] = null;
           $result[$i]['product_traces'] = null;
