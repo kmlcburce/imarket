@@ -15,5 +15,15 @@ class CouponController extends APIController
    	public function getCoupon($id){
       $result = Coupon::where('id', '=', $id)->get();
       return (sizeof($result) > 0) ? $result[0] : null;
-    }
+	}
+	
+	public function create(Request $request){
+		$this->rawRequest = $request;
+		if($this->checkAuthenticatedUser() == false){
+		  return $this->response();
+		}
+		$this->model = new Coupon;
+		$this->insertDB($request->all());
+		return $this->response();
+	}
 }
