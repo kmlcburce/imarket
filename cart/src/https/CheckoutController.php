@@ -147,6 +147,7 @@ class CheckoutController extends APIController
         $change =  $key['tendered_amount'] != null ? doubleval($key['tendered_amount']) - doubleval($key['total']) : 0;
         $this->response['data'][$i]['name'] = $this->retrieveNameOnly($key['account_id']);
         $this->response['data'][$i]['location'] = app($this->locationClass)->getAppenedLocationByParams('id', $key['location_id'], $key['merchant_id']);
+        $this->response['data'][$i]['rider_id'] = app($this->deliveryClass)->getRiderId('checkout_id', $key['id']);
         $this->response['data'][$i]['assigned_rider'] = app($this->deliveryClass)->getDeliveryName('checkout_id', $key['id']);
         $this->response['data'][$i]['change'] = $change;
         $this->response['data'][$i]['coupon'] = null;
