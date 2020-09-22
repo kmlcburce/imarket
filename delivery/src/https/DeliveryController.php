@@ -77,10 +77,13 @@ class DeliveryController extends APIController
     }
   }
 
-  public function getDeliveryName($column, $value){
+  public function getDeliveryDetails($column, $value){
     $result = Delivery::where($column, '=', $value)->get();
     if(sizeof($result) > 0){
-      return $this->retrieveNameOnly($result[0]['rider']);
+      return array(
+        'name'  => $this->retrieveNameOnly($result[0]['rider']),
+        'id'    => $result[0]['rider']
+      );
     }
     return null;
   }
