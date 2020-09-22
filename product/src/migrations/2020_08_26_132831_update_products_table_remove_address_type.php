@@ -15,7 +15,7 @@ class UpdateProductsTableRemoveAddressType extends Migration
     {
         //
         Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn(['address_type']);
+            // $table->dropColumn(['address_type']);
         });
     }
 

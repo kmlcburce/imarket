@@ -20,6 +20,7 @@ $controller = 'Increment\Imarket\Cart\Http\CheckoutItemController@';
 Route::post($route.'create', $controller."create");
 Route::post($route.'retrieve', $controller."retrieve");
 Route::post($route.'summary_of_inventory', $controller."summaryOfInventory");
+Route::post($route.'summary_of_inventory_daily', $controller."summaryOfInventoryDaily");
 Route::post($route.'retrieve_on_orders', $controller."retrieveOnOrder");
 Route::post($route.'update', $controller."update");
 Route::post($route.'delete', $controller."delete");
