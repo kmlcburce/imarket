@@ -16,6 +16,11 @@ class CouponController extends APIController
       $result = Coupon::where('id', '=', $id)->get();
       return (sizeof($result) > 0) ? $result[0] : null;
 	}
+
+	public function getCouponOnCode($code){
+		$results = Coupon::where('code', '=', $code)->get();
+		return (sizeof($result) > 0) ? $result[0] : null;
+	}
 	
 	public function create(Request $request){
 		$this->rawRequest = $request;

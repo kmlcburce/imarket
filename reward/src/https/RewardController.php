@@ -9,7 +9,7 @@ use Increment\Imarket\Checkout\Models\Checkout;
 use Increment\Account\Models\Account;
 use Carbon\Carbon;
 
-class FeaturedController extends APIController
+class RewardController extends APIController
 {
     //
     function __construct(){
