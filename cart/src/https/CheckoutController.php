@@ -34,7 +34,8 @@ class CheckoutController extends APIController
       'payment_type',
       'payment_payload',
       'payment_payload_value',
-      'notes'
+      'notes',
+      'tendered_amount'
     );
   }
 
