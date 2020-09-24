@@ -163,9 +163,10 @@ class CheckoutController extends APIController
     $data = $request->all();
     $prefix = app($this->merchantClass)->getByParamsReturnByParam('id', $data['merchant_id'], 'prefix');
     $counter = Checkout::where('merchant_id', '=', $data['merchant_id'])->count();
+    $location = app('Increment\Imarket\Location\Http\LocationController')->getByParams('merchant_id', $data['merchant_id']);
     $data['order_number'] = $prefix ? $prefix.$this->toCode($counter) : $this->toCode($counter);
     $data['code'] = $this->generateCode();
-    $distance = app('Increment\Imarket\Location\Http\LocationController')->getLongLatDistance($data['latFrom'], $data['longFrom'], $data['latTo'], $data['longTo']);
+    $distance = app('Increment\Imarket\Location\Http\LocationController')->getLongLatDistance($data['latFrom'], $data['longFrom'], $location['latitude'], $location['longitude']);
     $distanceCalc = intdiv($distance, 1);
     $data['shipping_fee'] = ($distanceCalc * 10) + 8;
     $this->model = new Checkout();
