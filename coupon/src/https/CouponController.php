@@ -27,8 +27,21 @@ class CouponController extends APIController
 		if($this->checkAuthenticatedUser() == false){
 		  return $this->response();
 		}
-		$this->model = new Coupon;
-		$this->insertDB($request->all());
+		$data = $request->all();
+		$codeExist = Coupon::where('value', '=', $data['code']);
+		if (sizeof($codeExist)<1){
+			$this->model = new Coupon;
+			$this->insertDB($request->all());
+		}
 		return $this->response();
+	}
+
+	public function useCoupon(Request $request){
+		$data = $request->all();
+		//check if coupon passed exists and is still valid in the date period used
+		$valid = Coupon::where('start', '<=', $data['date'])->where('end', '>=', $data['date'])->where('value', '=', $data['code'])->where('scope', '=', $data['scope'])->get();
+		if (sizeof($valid)>0 && $valid[0]['quota'] != NULL){
+			Coupon::where('id', '=', $valid[0]['id'])->get();
+		}
 	}
 }
