@@ -155,7 +155,7 @@ class CheckoutController extends APIController
         $this->response['data'][$i]['change'] = $change;
         $this->response['data'][$i]['coupon'] = null;
         $this->response['data'][$i]['date'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
-        $this->response['data'][$i]['message'] = $key['status'] !== 'completed' ? app($this->messengerGroupClass)->getUnreadMessagesByParams('title', $key['title'], $accountId) : null;
+        $this->response['data'][$i]['message'] = $key['status'] !== 'completed' ? app($this->messengerGroupClass)->getUnreadMessagesByParams('title', $key['code'], $accountId) : null;
         $i++;
       }
     }
