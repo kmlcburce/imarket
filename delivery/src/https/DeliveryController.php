@@ -140,14 +140,6 @@ class DeliveryController extends APIController
     return $this->response();;
   }
 
-  public function getRiderId($column, $value) {
-    $result = Delivery::where($column, '=', $value)->get();
-    if(sizeof($result) > 0){
-      return $result[0]['rider'];
-    }
-    return null;
-  }
-
   public function getDeliveryDetails($column, $value){
     $result = Delivery::where($column, '=', $value)->get();
     if(sizeof($result) > 0){
