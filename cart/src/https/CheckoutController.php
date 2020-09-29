@@ -151,7 +151,6 @@ class CheckoutController extends APIController
         $this->response['data'][$i]['name'] = $this->retrieveNameOnly($key['account_id']);
         $this->response['data'][$i]['location'] = app($this->locationClass)->getAppenedLocationByParams('id', $key['location_id'], $key['merchant_id']);
         $this->response['data'][$i]['assigned_rider'] = app($this->deliveryClass)->getDeliveryDetails('checkout_id', $key['id']);
-        $this->response['data'][$i]['rider_id'] = app($this->deliveryClass)->getRiderId('checkout_id', $key['id']);
         $this->response['data'][$i]['change'] = $change;
         $this->response['data'][$i]['coupon'] = null;
         $this->response['data'][$i]['date'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
