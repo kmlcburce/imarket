@@ -15,7 +15,7 @@ class UpdateProductsTableAddPreparationTime extends Migration
     {
         //
         Schema::table('products', function (Blueprint $table) {
-            $table->string('preparation_time')->after('price_settings');
+            $table->string('preparation_time')->after('price_settings')->nullable();
         });
     }
 
