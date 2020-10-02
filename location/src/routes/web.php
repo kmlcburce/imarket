@@ -9,3 +9,4 @@ Route::post($route.'delete', $controller."delete");
 Route::post($route.'add_scope', $controller."addLocationScope");
 Route::post($route.'get_scope', $controller."getLocationScope");
 Route::get($route.'test', $controller."test");
+Route::get($route.'get_distance', $controller."getRemainingDIstance");
