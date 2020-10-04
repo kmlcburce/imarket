@@ -4,6 +4,7 @@ namespace Increment\Imarket\Location\Http;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
+use Increment\Imarket\Cart\Models\Checkout;
 use Increment\Imarket\Location\Models\Location;
 use Carbon\Carbon;
 
@@ -36,10 +37,22 @@ class LocationController extends APIController
       }
     }
 
+    //Broadcasting for Rider remaining distance
+    public function getRemainingDistance(Request $request){
+      $data = $request->all();
+      $user = Checkout::select('location_id')->where('checkout_id','=',$data['checkout_id'])->get();
+      $merchant = Location::select('latitude','longitude')->where('merchant_id','=', $data['merchant_id'])->get();
+      $location = Location::select('latitude', 'longitude')->where('location_id', '=', $user)->get();
+      $distance = $this->getLongLatDistance($location['latitude'], $location['longitude'], $data['latitude'], $data['longitude']);
+      return $distance;
+    }
+
     public function getLongLatDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371){
-      if (is_null($latitudeFrom) || is_null($longitudeFrom) || is_null($latitudeTo) || is_null($longitudeTo)) {
-        return null;
-      }
+      //$latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371
+      // if (is_null($latitudeFrom) || is_null($longitudeFrom) || is_null($latitudeTo) || is_null($longitudeTo)) {
+      //   return null;
+      // }
+      $earthRadius = 6371;
       $latitudeFrom = floatval($latitudeFrom);
       $longitudeFrom = floatval($longitudeFrom);
       $latitudeTo = floatval($latitudeTo);
