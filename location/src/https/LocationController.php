@@ -52,7 +52,6 @@ class LocationController extends APIController
       // if (is_null($latitudeFrom) || is_null($longitudeFrom) || is_null($latitudeTo) || is_null($longitudeTo)) {
       //   return null;
       // }
-      $earthRadius = 6371;
       $latitudeFrom = floatval($latitudeFrom);
       $longitudeFrom = floatval($longitudeFrom);
       $latitudeTo = floatval($latitudeTo);
