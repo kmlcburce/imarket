@@ -69,8 +69,8 @@ class CheckoutController extends APIController
         $this->response['data'][$i]['merchant_location'] = $locations['merchant_location'];
         $this->response['data'][$i]['location'] = $locations['location'];
         $this->response['data'][$i]['distance'] = $locations['distance'];
-        $this->response['data'][$i]['customer_rating'] = app($this->ratingClass)->getRatingByPayload2($result[$i]['rider'], 'customer', $result[$i]['account_id'], 'checkout', $result[$i]['checkout_id']);
-        $this->response['data'][$i]['merchant_rating'] = app($this->ratingClass)->getRatingByPayload2($result[$i]['rider'], 'merchant', $result[$i]['merchant_id'], 'checkout', $result[$i]['checkout_id']);
+        $this->response['data'][$i]['customer_rating'] = app($this->ratingClass)->getRatingByPayload2($data['rider'], 'customer', $result[$i]['account_id'], 'checkout', $result[$i]['checkout_id']);
+        $this->response['data'][$i]['merchant_rating'] = app($this->ratingClass)->getRatingByPayload2($data['rider'], 'merchant', $result[$i]['merchant_id'], 'checkout', $result[$i]['checkout_id']);
         $i++;
       }
     }
