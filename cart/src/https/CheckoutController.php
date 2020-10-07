@@ -164,11 +164,11 @@ class CheckoutController extends APIController
     $counter = Checkout::where('merchant_id', '=', $data['merchant_id'])->count();
     $verification = Checkout::where('account_id', '=', $data['account_id'])->count();
     //checks if the account hasn't done any transactions and no file_url is passed
-    if ($verification < 1 || !isset($data['file_url'])){
-      return "Attach file_url for Valid ID";
-    }else if ($verification < 1 || isset($data['file_url'])){
-      $valid = app('Increment\Common\Image\Http\ImageController')->upload($request);
-    }
+    // if ($verification < 1 || !isset($data['file_url'])){
+    //   return "Attach file_url for Valid ID";
+    // }else if ($verification < 1 || isset($data['file_url'])){
+    //   $valid = app('Increment\Common\Image\Http\ImageController')->upload($request);
+    // }
     $location = app('Increment\Imarket\Location\Http\LocationController')->getByParams('merchant_id', $data['merchant_id']);
     $data['order_number'] = $prefix ? $prefix.$this->toCode($counter) : $this->toCode($counter);
     $data['code'] = $this->generateCode();
