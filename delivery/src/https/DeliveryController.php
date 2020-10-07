@@ -30,7 +30,7 @@ class DeliveryController extends APIController
 
     $data['code'] = $this->generateCode();
     $data['status'] = 'pending';
-    $data['amount'] = $data['delivery_fee'] + getPerformanceBonus($data["total"]) + 15;
+    $data['amount'] = $data['delivery_fee'] + $this->getPerformanceBonus($data["total"]) + 15;
     $this->model = new Delivery();
     $this->insertDB($data);
 
@@ -140,10 +140,13 @@ class DeliveryController extends APIController
     return $this->response();;
   }
 
-  public function getDeliveryName($column, $value){
+  public function getDeliveryDetails($column, $value){
     $result = Delivery::where($column, '=', $value)->get();
     if(sizeof($result) > 0){
-      return $this->retrieveNameOnly($result[0]['rider']);
+      return array(
+        'name'  => $this->retrieveNameOnly($result[0]['rider']),
+        'id'    => $result[0]['rider']
+      );
     }
     return null;
   }
