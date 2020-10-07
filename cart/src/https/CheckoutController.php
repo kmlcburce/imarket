@@ -25,6 +25,7 @@ class CheckoutController extends APIController
   public $locationClass = 'Increment\Imarket\Location\Http\LocationController';
   public $deliveryClass = 'Increment\Imarket\Delivery\Http\DeliveryController';
   public $messengerGroupClass = 'Increment\Messenger\Http\MessengerGroupController';
+  public $ratingClass = 'Increment\Common\Rating\Http\RatingController';
 
   function __construct(){
   	$this->model = new Checkout();
@@ -68,6 +69,8 @@ class CheckoutController extends APIController
         $this->response['data'][$i]['merchant_location'] = $locations['merchant_location'];
         $this->response['data'][$i]['location'] = $locations['location'];
         $this->response['data'][$i]['distance'] = $locations['distance'];
+        $this->response['data'][$i]['customer_rating'] = app($this->ratingClass)->getRatingByPayload2($result[$i]['rider'], 'customer', $result[$i]['account_id'], 'checkout', $result[$i]['checkout_id']);
+        $this->response['data'][$i]['merchant_rating'] = app($this->ratingClass)->getRatingByPayload2($result[$i]['rider'], 'merchant', $result[$i]['merchant_id'], 'checkout', $result[$i]['checkout_id']);
         $i++;
       }
     }
