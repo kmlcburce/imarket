@@ -8,6 +8,7 @@ use Increment\Imarket\Cart\Models\Checkout;
 use Increment\Imarket\Cart\Models\CheckoutItem;
 use Increment\Imarket\Merchant\Models\Merchant;
 use Increment\Imarket\Product\Models\Product;
+use Increment\Imarket\Delivery\Models\DeliveryFee;
 use Increment\Imarket\Product\Models\Pricing;
 use Increment\Imarket\Payment\Models\StripeWebhook;
 use Carbon\Carbon;
@@ -181,7 +182,16 @@ class CheckoutController extends APIController
     $data['code'] = $this->generateCode();
     $distance = app('Increment\Imarket\Location\Http\LocationController')->getLongLatDistance($data['latFrom'], $data['longFrom'], $location['latitude'], $location['longitude']);
     $distanceCalc = intdiv($distance, 1);
-    $data['shipping_fee'] = ($distanceCalc * 10) + 8;
+    $locationCode = Location::select('code')->where('merchant_id', '=', $data['merchant_id'])->get();
+    $deliveryScope = DeliveryFee::where('code','=',$locationCode)->get();
+    //compare params in deliveryFee for calculation
+    //check if distance is under minimum distance
+    if ($deliveryScope['minimum_distance'] <= $distanceCalc){
+      $data['shipping_fee'] = $deliveryScope['minimum_charge'];
+    }else{
+      $data['shipping_fee'] = $deliveryScope['minimum_charge']+(($distanceCalc-$deliveryScope['minimum_distance'])*$deliveryScope['addition_charge_per_distance']);
+    }
+    //$data['shipping_fee'] = ($distanceCalc * 10) + 8;
     $this->model = new Checkout();
     $this->insertDB($data);
     if($this->response['data'] > 0){
