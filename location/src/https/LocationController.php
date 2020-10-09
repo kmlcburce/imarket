@@ -42,8 +42,8 @@ class LocationController extends APIController
       $data = $request->all();
       $user = Checkout::select('location_id')->where('id','=',$data['checkout_id'])->get();
       $merchant = Location::select('latitude','longitude')->where('merchant_id','=', $data['merchant_id'])->get();
-      $location = Location::select('latitude', 'longitude')->where('id', '=', $user)->get();
-      $distance = $this->getLongLatDistance($location['latitude'], $location['longitude'], $data['latitude'], $data['longitude']);
+      $location = Location::select('latitude', 'longitude')->where('id', '=', $user[0])->get();
+      $distance = $this->getLongLatDistance($location[0]['latitude'], $location[0]['longitude'], $data['latitude'], $data['longitude']);
       return $distance;
     }
 
