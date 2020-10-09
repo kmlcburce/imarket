@@ -222,12 +222,6 @@ class CheckoutController extends APIController
     return $this->response();
   }
 
-  public function testing(Request $request){
-    $data=$request->all();
-    $location = app('Increment\Imarket\Location\Http\LocationController')->getByParams('merchant_id', $data['merchant_id']);
-    return $location;
-  }
-
   public function toCode($size){
     $length = strlen((string)$size);
     $code = '00000001';
