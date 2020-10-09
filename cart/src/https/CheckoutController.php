@@ -7,6 +7,7 @@ use App\Http\Controllers\APIController;
 use Increment\Imarket\Cart\Models\Checkout;
 use Increment\Imarket\Cart\Models\CheckoutItem;
 use Increment\Imarket\Merchant\Models\Merchant;
+use Increment\Imarket\Location\Models\Location;
 use Increment\Imarket\Product\Models\Product;
 use Increment\Imarket\Delivery\Models\DeliveryFee;
 use Increment\Imarket\Product\Models\Pricing;
@@ -168,27 +169,20 @@ class CheckoutController extends APIController
     $prefix = app($this->merchantClass)->getByParamsReturnByParam('id', $data['merchant_id'], 'prefix');
     $counter = Checkout::where('merchant_id', '=', $data['merchant_id'])->count();
     $verification = Checkout::where('account_id', '=', $data['account_id'])->count();
-    //checks if the account hasn't done any transactions and no file_url is passed
-    // if ($verification < 1 || !isset($data['file_url'])){
-    //   return "Attach file_url for Valid ID";
-    // }else if ($verification < 1 || isset($data['file_url'])){
-    //   $valid = app('Increment\Common\Image\Http\ImageController')->upload($request);
-    // }
     $location = app('Increment\Imarket\Location\Http\LocationController')->getByParams('merchant_id', $data['merchant_id']);
     $data['order_number'] = $prefix ? $prefix.$this->toCode($counter) : $this->toCode($counter);
     $data['code'] = $this->generateCode();
     $distance = app('Increment\Imarket\Location\Http\LocationController')->getLongLatDistance($data['latFrom'], $data['longFrom'], $location['latitude'], $location['longitude']);
     $distanceCalc = intdiv($distance, 1);
     $locationCode = Location::select('code')->where('merchant_id', '=', $data['merchant_id'])->get();
-    $deliveryScope = DeliveryFee::where('code','=',$locationCode)->get();
+    $deliveryScope = DeliveryFee::where('scope','=',$locationCode[0]['code'])->get();
     //compare params in deliveryFee for calculation
     //check if distance is under minimum distance
     if ($deliveryScope['minimum_distance'] <= $distanceCalc){
-      $data['shipping_fee'] = $deliveryScope['minimum_charge'];
+      $data['shipping_fee'] = $deliveryScope[0]['minimum_charge'];
     }else{
-      $data['shipping_fee'] = $deliveryScope['minimum_charge']+(($distanceCalc-$deliveryScope['minimum_distance'])*$deliveryScope['addition_charge_per_distance']);
+      $data['shipping_fee'] = $deliveryScope[0]['minimum_charge']+(($distanceCalc-$deliveryScope[0]['minimum_distance'])*$deliveryScope[0]['addition_charge_per_distance']);
     }
-    //$data['shipping_fee'] = ($distanceCalc * 10) + 8;
     $this->model = new Checkout();
     $this->insertDB($data);
     if($this->response['data'] > 0){
