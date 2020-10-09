@@ -40,13 +40,16 @@ class LocationController extends APIController
 
     //Broadcasting for Rider remaining distance
     public function getRemainingDistance(Request $request){
+      $resultval = [];
       $data = $request->all();
       $user = DB::table('checkouts')->select('location_id')->where('id','=', $data['checkout_id'])->get();
       $result = json_decode($user, true);
       $merchant = Location::select('latitude','longitude')->where('merchant_id','=', $data['merchant_id'])->get();
       $location = Location::select('latitude', 'longitude')->where('id', '=', $result[0]['location_id'])->get();
-      $distance = $this->getLongLatDistance($location[0]['latitude'], $location[0]['longitude'], $data['latitude'], $data['longitude']);
-      return $distance;
+      $resultval['user_distance'] = $this->getLongLatDistance($location[0]['latitude'], $location[0]['longitude'], $data['latitude'], $data['longitude']);
+      $resultval['merchant_distance'] = $this->getLongLatDistance($merchant[0]['latitude'], $merchant[0]['longitude'], $data['latitude'], $data['longitude']);
+      $this->response['data'] = $resultval;
+      return $this->response();
     }
 
     public function getLongLatDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371){

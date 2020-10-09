@@ -167,8 +167,6 @@ class CheckoutController extends APIController
   public function create(Request $request){
     $data = $request->all();
     $prefix = app($this->merchantClass)->getByParamsReturnByParam('id', $data['merchant_id'], 'prefix');
-    $counter = Checkout::where('merchant_id', '=', $data['merchant_id'])->count();
-    $verification = Checkout::where('account_id', '=', $data['account_id'])->count();
     $location = app('Increment\Imarket\Location\Http\LocationController')->getByParams('merchant_id', $data['merchant_id']);
     $data['order_number'] = $prefix ? $prefix.$this->toCode($counter) : $this->toCode($counter);
     $data['code'] = $this->generateCode();
@@ -228,6 +226,21 @@ class CheckoutController extends APIController
     return substr_replace($code, $size, intval(7 - $length));
   }
 
+  public function getshippingFee(Request $request){
+    $data = $request->all();
+    $location = app('Increment\Imarket\Location\Http\LocationController')->getByParams('merchant_id', $data['merchant_id']);
+    $distance = app('Increment\Imarket\Location\Http\LocationController')->getLongLatDistance($data['latitude'], $data['longitude'], $location['latitude'], $location['longitude']);
+    $distanceCalc = intdiv($distance, 1);
+    $locationCode = Location::select('code')->where('merchant_id', '=', $data['merchant_id'])->get();
+    $deliveryScope = DeliveryFee::where('scope','=',$locationCode[0]['code'])->get();
+    //compare params in deliveryFee for calculation
+    //check if distance is under minimum distance
+    if ($deliveryScope[0]['minimum_distance'] <= $distanceCalc){
+      return $deliveryScope[0]['minimum_charge'];
+    }else{
+      return $deliveryScope[0]['minimum_charge']+(($distanceCalc-$deliveryScope[0]['minimum_distance'])*$deliveryScope[0]['addition_charge_per_distance']);
+    }
+  }
   
   public function getByParamsReturnByParam($column, $value, $param){
     $result = Checkout::where($column, '=', $value)->get();
