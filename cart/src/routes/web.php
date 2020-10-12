@@ -13,6 +13,7 @@ Route::post($route.'update', $controller."update");
 Route::post($route.'delete', $controller."delete");
 Route::get($route.'test', $controller."test");
 Route::post($route.'update_status', $controller."updateStatus");
+Route::post($route.'get_shipping_fee', $controller."getShippingFee");
 
 // Checkout Items
 $route = env('PACKAGE_ROUTE', '').'/checkout_items/';

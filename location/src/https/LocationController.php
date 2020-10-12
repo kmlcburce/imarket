@@ -5,6 +5,7 @@ namespace Increment\Imarket\Location\Http;
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
 use Increment\Imarket\Cart\Models\Checkout;
+use Illuminate\Support\Facades\DB;
 use Increment\Imarket\Location\Models\Location;
 use Carbon\Carbon;
 
@@ -39,12 +40,16 @@ class LocationController extends APIController
 
     //Broadcasting for Rider remaining distance
     public function getRemainingDistance(Request $request){
+      $resultval = [];
       $data = $request->all();
-      $user = Checkout::select('location_id')->where('id','=',$data['checkout_id'])->get();
+      $user = DB::table('checkouts')->select('location_id')->where('id','=', $data['checkout_id'])->get();
+      $result = json_decode($user, true);
       $merchant = Location::select('latitude','longitude')->where('merchant_id','=', $data['merchant_id'])->get();
-      $location = Location::select('latitude', 'longitude')->where('id', '=', $user[0])->get();
-      $distance = $this->getLongLatDistance($location[0]['latitude'], $location[0]['longitude'], $data['latitude'], $data['longitude']);
-      return $distance;
+      $location = Location::select('latitude', 'longitude')->where('id', '=', $result[0]['location_id'])->get();
+      $resultval['user_distance'] = $this->getLongLatDistance($location[0]['latitude'], $location[0]['longitude'], $data['latitude'], $data['longitude']);
+      $resultval['merchant_distance'] = $this->getLongLatDistance($merchant[0]['latitude'], $merchant[0]['longitude'], $data['latitude'], $data['longitude']);
+      $this->response['data'] = $resultval;
+      return $this->response();
     }
 
     public function getLongLatDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371){
