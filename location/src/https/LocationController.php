@@ -59,7 +59,7 @@ class LocationController extends APIController
         return null;
       }
       $latitudeFrom = floatval($latitudeFrom);
-      $longitudeFrom = floatval($longitudeFrom);;
+      $longitudeFrom = floatval($longitudeFrom);
       $latitudeTo = floatval($latitudeTo);
       $longitudeTo = floatval($longitudeTo);
       // convert from degrees to radians
