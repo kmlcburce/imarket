@@ -53,12 +53,13 @@ class LocationController extends APIController
     }
 
     public function getLongLatDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371){
+      
       //$latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371
-      // if (is_null($latitudeFrom) || is_null($longitudeFrom) || is_null($latitudeTo) || is_null($longitudeTo)) {
-      //   return null;
-      // }
+      if (is_null($latitudeFrom) || is_null($longitudeFrom) || is_null($latitudeTo) || is_null($longitudeTo)) {
+        return null;
+      }
       $latitudeFrom = floatval($latitudeFrom);
-      $longitudeFrom = floatval($longitudeFrom);
+      $longitudeFrom = floatval($longitudeFrom);;
       $latitudeTo = floatval($latitudeTo);
       $longitudeTo = floatval($longitudeTo);
       // convert from degrees to radians
@@ -67,12 +68,10 @@ class LocationController extends APIController
       $latTo = deg2rad($latitudeTo);
       $lonTo = deg2rad($longitudeTo);
       $lonDelta = $lonTo - $lonFrom;
-      $a = pow(cos($latTo) * sin($lonDelta), 2) +
-        pow(cos($latFrom) * sin($latTo) - sin($latFrom) * cos($latTo) * cos($lonDelta), 2);
+      $a = pow(cos($latTo) * sin($lonDelta), 2) + pow(cos($latFrom) * sin($latTo) - sin($latFrom) * cos($latTo) * cos($lonDelta), 2);
       $b = sin($latFrom) * sin($latTo) + cos($latFrom) * cos($latTo) * cos($lonDelta);
-    
       $angle = atan2(sqrt($a), $b);
-      return $angle * $earthRadius;
+    return $angle * $earthRadius;
     }
 
     public function getDistanceFromMerchant($merchantId, $id){
