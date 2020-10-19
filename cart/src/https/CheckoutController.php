@@ -150,16 +150,19 @@ class CheckoutController extends APIController
     if(sizeof($result) > 0){
       $i = 0;
       foreach ($result as $key) {
+        $delivery = app($this->deliveryClass)->getDeliveryDetails('checkout_id', $key['id']);
         $accountId = app($this->merchantClass)->getByParamsReturnByParam('id', $key['merchant_id'], 'account_id');
         $this->response['data'][$i]['tendered_amount'] =  $key['tendered_amount'] == null ? 0 :  doubleval($key['tendered_amount']);
         $change =  $key['tendered_amount'] != null ? doubleval($key['tendered_amount']) - doubleval($key['total']) : 0;
         $this->response['data'][$i]['name'] = $this->retrieveNameOnly($key['account_id']);
         $this->response['data'][$i]['location'] = app($this->locationClass)->getAppenedLocationByParams('id', $key['location_id'], $key['merchant_id']);
-        $this->response['data'][$i]['assigned_rider'] = app($this->deliveryClass)->getDeliveryDetails('checkout_id', $key['id']);
+        $this->response['data'][$i]['assigned_rider'] = $delivery;
         $this->response['data'][$i]['change'] = $change;
         $this->response['data'][$i]['coupon'] = null;
         $this->response['data'][$i]['date'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
         $this->response['data'][$i]['message'] = $key['status'] !== 'completed' ? app($this->messengerGroupClass)->getUnreadMessagesByParams('title', $key['code'], $accountId) : null;
+        $this->response['data'][$i]['customer_rating'] = app($this->ratingClass)->getRatingByPayload2($accountId, 'customer', $result[$i]['account_id'], 'checkout', $result[$i]['id']);
+        $this->response['data'][$i]['rider_rating'] = $delivery ? app($this->ratingClass)->getRatingByPayload2($accountId, 'rider', $delivery['id'], 'checkout', $result[$i]['id']) : null;
         $i++;
       }
     }
