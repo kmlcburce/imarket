@@ -170,6 +170,37 @@ class CheckoutController extends APIController
     return $this->response();
   }
 
+
+  public function retrieveOrdersMobile(Request $request){
+    $data = $request->all();
+    $this->model = new Checkout();
+    $this->retrieveDB($data);
+    $result = $this->response['data'];
+    $array = array();
+    if(sizeof($result) > 0){
+      $i = 0;
+      foreach ($result as $key) {
+        $accountId = app($this->merchantClass)->getByParamsReturnByParam('id', $key['merchant_id'], 'account_id');
+        $object = array(
+          'location'  => app($this->locationClass)->getAppenedLocationByParams('id', $key['location_id'], $key['merchant_id']),
+          'date'      => Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A'),
+          'message'   => $key['status'] !== 'completed' ? app($this->messengerGroupClass)->getUnreadMessagesByParams('title', $key['code'], $accountId) : null,
+          'broadcast' => null,
+          'status'    => $key['status'],
+          'order_number'    => $key['order_number'],
+          'id'    => $key['id'],
+          'total'    => $key['total'],
+          'currency'    => $key['currency']
+        );
+        $array[] = $object;
+        $i++;
+      }
+    }
+    $this->response['data'] = $array;
+    $this->response['size'] = Checkout::where($data['condition'][0]['column'], $data['condition'][0]['clause'], $data['condition'][0]['value'])->count();
+    return $this->response();
+  }
+
   public function create(Request $request){
     $data = $request->all();
     $prefix = app($this->merchantClass)->getByParamsReturnByParam('id', $data['merchant_id'], 'prefix');
