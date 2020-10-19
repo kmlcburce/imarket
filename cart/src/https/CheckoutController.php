@@ -167,6 +167,7 @@ class CheckoutController extends APIController
   public function create(Request $request){
     $data = $request->all();
     $prefix = app($this->merchantClass)->getByParamsReturnByParam('id', $data['merchant_id'], 'prefix');
+    $counter = Checkout::where('merchant_id', '=', $data['merchant_id'])->count();
     $location = app('Increment\Imarket\Location\Http\LocationController')->getByParams('merchant_id', $data['merchant_id']);
     $data['order_number'] = $prefix ? $prefix.$this->toCode($counter) : $this->toCode($counter);
     $data['code'] = $this->generateCode();
