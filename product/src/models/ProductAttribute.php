@@ -6,5 +6,5 @@ use App\APIModel;
 class ProductAttribute extends APIModel
 {
     protected $table = 'product_attributes';
-    protected $fillable = ['account_id', 'product_id', 'payload',  'payload_value'];
+    protected $fillable = ['account_id', 'product_id', 'payload',  'payload_value', 'price', 'currency'];
 }
