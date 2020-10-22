@@ -15,7 +15,7 @@ class UpdateProductAttributesTableAddStatusVariations extends Migration
     {
         //
         Schema::table('product_attributes', function (Blueprint $table) {
-            $table->string('status')->after('currency');
+            $table->string('status')->after('currency')->default('open');
         });
     }
 
