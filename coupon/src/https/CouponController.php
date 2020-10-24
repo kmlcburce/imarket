@@ -9,7 +9,7 @@ class CouponController extends APIController
 {
    	function __construct(){
    		$this->model = new Coupon();
-   		$this->notRequired = array('scope');
+   		$this->notRequired = array('scope', 'minimum_amount', 'quota');
    	}
 
    	public function getCoupon($id){
@@ -28,7 +28,7 @@ class CouponController extends APIController
 		  return $this->response();
 		}
 		$data = $request->all();
-		$codeExist = Coupon::where('value', '=', $data['code']);
+		$codeExist = Coupon::where('value', '=', $data['code'])->get();
 		if (sizeof($codeExist)<1){
 			$this->model = new Coupon;
 			$this->insertDB($request->all());
