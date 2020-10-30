@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 class CheckoutItemController extends APIController
 {
+    public $productImageController = 'Increment\Imarket\Product\Http\ProductImageController';
     public $merchantClass = 'Increment\Imarket\Merchant\Http\MerchantController';
     public $productClass = 'Increment\Imarket\Product\Http\ProductController';
     function __construct(){
@@ -36,7 +37,8 @@ class CheckoutItemController extends APIController
                 'price'     => $key['price'],
                 'size'      => $key['size'],
                 'color'     => $key['color'],
-                'status'     => $key['status'],
+                'status'    => $key['status'],
+                'images'    => app($this->productImageController)->getProductImage($key['payload_value'], 'featured')
             );
             $array[] = $item;
             $i++;
