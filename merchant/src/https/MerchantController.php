@@ -19,11 +19,17 @@ class MerchantController extends APIController
 
   public function create(Request $request){
     $data = $request->all();
-    $data['code'] = $this->generateCode();
-    $data['status'] = 'not_verified';
-    $this->model = new Merchant();
-    $this->insertDB($data);
-    return $this->response();
+    $verify = Merchant::where('account_id', '=', $data['account_id'])->get();
+    if (count($verify) > 0){
+      array_push($this->response['error'], "Duplicate value for account id ".$data['account_id']);
+      return $this->response();
+    }else{
+      $data['code'] = $this->generateCode();
+      $data['status'] = 'not_verified';
+      $this->model = new Merchant();
+      $this->insertDB($data);
+      return $this->response();
+    }
   }
 
   public function generateCode(){
