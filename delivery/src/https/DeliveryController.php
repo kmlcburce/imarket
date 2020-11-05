@@ -40,7 +40,9 @@ class DeliveryController extends APIController
         'delivery'    => $data['code'],
         'checkout'    => app($this->checkoutClass)->getByParamsReturnByParam('id', $data['checkout_id'], 'code'),
         'check_id'    => $data['checkout_id'],
-        'assigned_rider' => $this->retrieveNameOnly($data['rider'])
+        'assigned_rider' => $this->retrieveNameOnly($data['rider']),
+        'account_id'  => $data['account_id'],
+        'order_number' => app($this->checkoutClass)->getByParamsReturnByParam('id', $data['checkout_id'], 'order_number'),
       );
       Notifications::dispatch('rider', $array);
     }
