@@ -44,4 +44,15 @@ class CouponController extends APIController
 			Coupon::where('id', '=', $valid[0]['id'])->get();
 		}
 	}
+
+	public function retrieve(Request $request) {
+		$data = $request->all();
+		$results = DB::table('coupons')
+			->limit($data['limit'])
+			->skip($data['offset'])
+			->get();
+		$this->response['data'] = $results;
+		$this->response['size'] = count(DB::table('coupons')->get());
+		return $this->response();
+	}
 }
