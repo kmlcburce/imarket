@@ -5,6 +5,7 @@ namespace Increment\Imarket\Coupon\Http;
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
 use Increment\Imarket\Coupon\Models\Coupon;
+use DB;
 class CouponController extends APIController
 {
    	function __construct(){
