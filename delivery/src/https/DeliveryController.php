@@ -11,6 +11,7 @@ use App\Jobs\Notifications;
 use Illuminate\Support\Facades\DB;
 class DeliveryController extends APIController
 {
+  public $notificationClass = 'Increment\Common\Notification\Http\NotificationController';
   public $locationClass = 'Increment\Imarket\Location\Http\LocationController';
   public $checkoutClass = 'Increment\Imarket\Cart\Http\CheckoutController';
   public $merchantClass = 'Increment\Imarket\Merchant\Http\MerchantController';
@@ -45,6 +46,15 @@ class DeliveryController extends APIController
         'order_number' => app($this->checkoutClass)->getByParamsReturnByParam('id', $data['checkout_id'], 'order_number'),
       );
       Notifications::dispatch('rider', $array);
+      $notifParams = array(
+        'to' => $data['account_id'],
+        'from' => $data['rider'],
+        'payload' => 'new_delivery',
+        'payload_value' => $data['code'], // DELIVERY TABLE (CODE)
+        'route' => $data['checkout_id'], // CHECKOUT TABLE (ID)
+        'created_at' => Carbon::now()
+      );
+      app($this->notificationClass)->createByParams($notifParams);
     }
     return $this->response();
   }
