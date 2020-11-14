@@ -173,7 +173,8 @@ class CheckoutController extends APIController
     $data['code'] = $this->generateCode();
     $distance = app('Increment\Imarket\Location\Http\LocationController')->getLongLatDistance($data['latitude'], $data['longitude'], $location['latitude'], $location['longitude']);
     $distanceCalc = intdiv($distance, 1);
-    $locationCode = Location::select('code')->where('merchant_id', '=', $data['merchant_id'])->get();
+    $locationCode = Location::select('id','code')->where('merchant_id', '=', $data['merchant_id'])->get();
+    $data['location_id'] = $locationCode[0]['id'];
     $deliveryScope = DeliveryFee::where('scope','=',$locationCode[0]['code'])->get();
     //compare params in deliveryFee for calculation
     //check if distance is under minimum distance
@@ -196,8 +197,6 @@ class CheckoutController extends APIController
             'checkout_id' => $this->response['data'],
             'payload'     => 'product',
             'payload_value' => $cartItems[$i]['id'],
-            'size'        => '',
-            'color'       => '',
             'qty'       => $cartItems[$i]['quantity'],
             'price'       => $cartItems[$i]['price'][0]['price'],
             'status'       => 'pending'
