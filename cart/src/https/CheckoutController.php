@@ -235,8 +235,10 @@ class CheckoutController extends APIController
             'payload'     => 'product',
             'payload_value' => $cartItems[$i]['id'],
             'qty'       => $cartItems[$i]['quantity'],
+            'product_attribute_id' => $cartItems[$i]['product_attribute_id'],
             'price'       => $cartItems[$i]['price'][0]['price'],
-            'status'       => 'pending'
+            'status'       => 'pending',
+            'created_at' => Carbon::now()
           );
           $items[] = $item;
           $i++;
