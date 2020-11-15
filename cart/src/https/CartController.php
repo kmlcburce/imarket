@@ -16,7 +16,6 @@ class CartController extends APIController
   public function create(Request $request){
     $data = $request->all();
     $this->model = new Cart();
-
     $hasCart = Cart::where('account_id', '=', $request['account_id'])->first();
     if (sizeof($hasCart) > 0) {
       $updated_data = array(
