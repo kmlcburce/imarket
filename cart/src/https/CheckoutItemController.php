@@ -35,8 +35,6 @@ class CheckoutItemController extends APIController
                 'title'     => app($this->productClass)->getByParamsReturnByParam('id', $key['payload_value'], 'title'),
                 'qty'       => $key['qty'],
                 'price'     => $key['price'],
-                'size'      => $key['size'],
-                'color'     => $key['color'],
                 'status'    => $key['status'],
                 'images'    => app($this->productImageController)->getProductImage($key['payload_value'], 'featured')
             );
