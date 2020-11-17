@@ -34,8 +34,7 @@ class CheckoutItemController extends APIController
                 'title'     => app($this->productClass)->getByParamsReturnByParam('id', $key['payload_value'], 'title'),
                 'qty'       => $key['qty'],
                 'price'     => $key['price'],
-                'size'      => $key['size'],
-                'color'     => $key['color'],
+                'product_attribute_id' => $key['product_attribute_id'],
                 'status'     => $key['status'],
             );
             $array[] = $item;
