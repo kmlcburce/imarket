@@ -87,4 +87,9 @@ class InstallmentRequestController extends APIController
 
     return null;
   }
+
+  public function getByParamsRoot($column, $value){
+    $result = InstallmentRequest::where($column, '=', $value)->get();
+    return (sizeof($result) > 0) ? $result[0] : null;
+  }
 }

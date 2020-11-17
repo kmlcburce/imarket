@@ -89,6 +89,11 @@ class RentalController extends APIController
       return null;
     }
 
+    public function getByParamsRoot($column, $value){
+      $result = Rental::where($column, '=', $value)->get();
+      return (sizeof($result) > 0) ? $result[0] : null;
+    }
+
     public function search(Request $request){
       $data = $request->all();
       $tempResult = DB::table('product_exclusive_locations as T1')
