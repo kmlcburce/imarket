@@ -229,21 +229,40 @@ class CheckoutController extends APIController
         $items = array();
         $i = 0;
         foreach ($cartItems as $key => $value) {
-          $item = array(
-            'account_id'  => $data['account_id'],
-            'checkout_id' => $this->response['data'],
-            'payload'     => 'product',
-            'payload_value' => $cartItems[$i]['id'],
-            'qty'       => $cartItems[$i]['quantity'],
-            'product_attribute_id' => isset($cartItems[$i]['product_attribute_id']) ? $cartItems[$i]['product_attribute_id'] : NULL,
-            'price'       => $cartItems[$i]['price'][0]['price'],
-            'status'       => 'pending',
-            'created_at' => Carbon::now()
-          );
-          $items[] = $item;
-          $i++;
+          if (sizeof($cartItems[$i]['selectedVariation'])>0){
+            for ($x=0; $x<sizeof($cartItems[$i]['selectedVariation']); $x++){
+              $item = array(
+                'account_id'  => $data['account_id'],
+                'checkout_id' => $this->response['data'],
+                'payload'     => 'product',
+                'payload_value' => $cartItems[$i]['id'],
+                'qty'       => $cartItems[$i]['quantity'],
+                'product_attribute_id' => $cartItems[$i]['selectedVariation'][$x]['id'],
+                'price'       => $cartItems[$i]['selectedVariation'][$x]['price'],
+                'status'       => 'pending',
+                'created_at' => Carbon::now()
+              );
+              $items[] = $item;
+            }
+            $i++;
+          }else if ($cartItems[$i]['price'] == NULL){
+            return NULL;
+          }else{
+            $item = array(
+              'account_id'  => $data['account_id'],
+              'checkout_id' => $this->response['data'],
+              'payload'     => 'product',
+              'payload_value' => $cartItems[$i]['id'],
+              'qty'       => $cartItems[$i]['quantity'],
+              'product_attribute_id' => isset($cartItems[$i]['product_attribute_id']) ? $cartItems[$i]['product_attribute_id'] : NULL,
+              'price'       => $cartItems[$i]['price'][0]['price'],
+              'status'       => 'pending',
+              'created_at' => Carbon::now()
+            );
+            $items[] = $item;
+            $i++;
+          }
         }
-
         app($this->checkoutItemClass)->insertInArray($items);
         app($this->cartClass)->emptyItems($data['account_id']);
 
