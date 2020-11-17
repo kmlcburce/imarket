@@ -5,6 +5,7 @@ namespace Increment\Imarket\Coupon\Http;
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
 use Increment\Imarket\Coupon\Models\Coupon;
+use DB;
 class CouponController extends APIController
 {
    	function __construct(){
@@ -43,5 +44,16 @@ class CouponController extends APIController
 		if (sizeof($valid)>0 && $valid[0]['quota'] != NULL){
 			Coupon::where('id', '=', $valid[0]['id'])->get();
 		}
+	}
+
+	public function retrieve(Request $request) {
+		$data = $request->all();
+		$results = DB::table('coupons')
+			->limit($data['limit'])
+			->skip($data['offset'])
+			->get();
+		$this->response['data'] = $results;
+		$this->response['size'] = count(DB::table('coupons')->get());
+		return $this->response();
 	}
 }

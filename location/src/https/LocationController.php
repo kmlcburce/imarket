@@ -100,6 +100,12 @@ class LocationController extends APIController
       return sizeof($result) > 0 ? $result[0] : null;
     }
 
+
+    public function getColumnValueByParams($column, $value, $returnColumn){
+      $result = Location::where($column, '=', $value)->get();
+      return sizeof($result) > 0 ? $result[0][$returnColumn] : null;
+    }
+
     public function getAppenedLocationByParams($column, $value, $merchantId){
       $from = $this->getByParams('merchant_id', $merchantId);
       $to = $this->getByParams($column, $value);

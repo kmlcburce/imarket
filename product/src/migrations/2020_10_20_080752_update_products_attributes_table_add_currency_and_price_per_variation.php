@@ -15,7 +15,7 @@ class UpdateProductsAttributesTableAddCurrencyAndPricePerVariation extends Migra
     {
         //
         Schema::table('product_attributes', function (Blueprint $table) {
-            $table->double('price',8,2)->after('payload_value');
+            $table->double('price',8,2)->after('payload_value')->default(0);
             $table->string('currency')->default('PHP')->after('price');
         });
     }

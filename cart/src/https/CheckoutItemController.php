@@ -11,8 +11,10 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 class CheckoutItemController extends APIController
 {
+    public $productImageController = 'Increment\Imarket\Product\Http\ProductImageController';
     public $merchantClass = 'Increment\Imarket\Merchant\Http\MerchantController';
     public $productClass = 'Increment\Imarket\Product\Http\ProductController';
+    public $productAttributeClass = 'Increment\Imarket\Product\Http\ProductAttributeController';
     function __construct(){
     	$this->model = new CheckoutItem();
         $this->notRequired = array(
@@ -29,13 +31,18 @@ class CheckoutItemController extends APIController
           $i = 0;
           $array = array();
           foreach ($result as $key) {
+            $attributes = null;
+            if($key['product_attribute_id'] != null && $key['product_attribute_id'] > 0){
+                $attributes = app($this->productAttributeClass)->getByParams('id', $key['product_attribute_id']);
+            }
             $item = array(
                 'id'        => $key['id'],
                 'title'     => app($this->productClass)->getByParamsReturnByParam('id', $key['payload_value'], 'title'),
                 'qty'       => $key['qty'],
                 'price'     => $key['price'],
-                'product_attribute_id' => $key['product_attribute_id'],
-                'status'     => $key['status'],
+                'status'    => $key['status'],
+                'product_attributes' => $attributes,
+                'images'    => app($this->productImageController)->getProductImage($key['payload_value'], 'featured')
             );
             $array[] = $item;
             $i++;
