@@ -13,7 +13,7 @@
     "require": {},
     "autoload": {
         "psr-4": {
-            "Increment\\IMarket\\Location": "src/"
+            "Increment\\Imarket\\Location": "src/"
         }
     },
     "extra": {
