@@ -100,6 +100,11 @@ class LocationController extends APIController
       return sizeof($result) > 0 ? $result[0] : null;
     }
 
+    public function getByParamsWithCode($column, $value){
+      $result = Location::where($column, '=', $value)->where('code', '!=', null)->limit(1)->get();
+      return sizeof($result) > 0 ? $result[0] : null;
+    }
+
 
     public function getColumnValueByParams($column, $value, $returnColumn){
       $result = Location::where($column, '=', $value)->get();
