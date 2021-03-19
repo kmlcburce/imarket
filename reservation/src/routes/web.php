@@ -2,7 +2,7 @@
 
 // Coupons
 $route = env('PACKAGE_ROUTE', '').'/reservations/';
-$controller = 'Increment\Imarket\Rental\Http\ReservationController@';
+$controller = 'Increment\Imarket\Reservation\Http\ReservationController@';
 Route::post($route.'create', $controller."create");
 Route::post($route.'retrieve', $controller."retrieve");
 Route::post($route.'search', $controller."search");

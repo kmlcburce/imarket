@@ -1,6 +1,6 @@
 <?php
 
-namespace Increment\Imarket\Rental\Models;
+namespace Increment\Imarket\Reservation\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\APIModel;
 use Carbon\Carbon;
