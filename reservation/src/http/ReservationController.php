@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\DB;
 class ReservationController extends APIController
 {
 
+	public $synqtClass = 'App\Http\Controllers\SynqtController';
+    public $merchantClass = 'Increment\Imarket\Merchant\Http\MerchantController';
+
    	function __construct(){
    		$this->model = new Reservation();
    	}
@@ -22,6 +25,8 @@ class ReservationController extends APIController
 			$i = 0;
 			foreach ($result as $key) {
 				$result[$i]['reservee'] = $this->retrieveNameOnly($result[$i]['account_id']);
+				$result[$i]['synqt'] = app($this->synqtClass)->retrieveByParams('id', $result[$i]['payload_value']);
+                $result[$i]['merchant'] = app($this->merchantClass)->getByParams('id', $result[$i]['merchant_id']);
 
 			 $i++;
 			}
