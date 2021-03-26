@@ -140,4 +140,17 @@ class LocationController extends APIController
         'distance'          => $distance.' km',
       );
     }
+
+    public function getLocation(Request $request){
+      $data = $request->all();
+      Location::where('account_id', '=', $data['account_id'])
+              ->update(array(
+                'code' => $data['code'],
+                'updated_at' => Carbon::now()
+              ));
+      if($this->response['error'] == []){
+        $this->response['data'] = 'true';
+      };
+      return $this->response();
+    }
 }
