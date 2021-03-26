@@ -13,7 +13,7 @@ class MerchantController extends APIController
     $this->model = new Merchant();
 
     $this->notRequired = array(
-    	'name', 'address', 'prefix', 'logo', 'website', 'email', 'schedule'
+    	'name', 'address', 'prefix', 'logo', 'website', 'email', 'schedule', 'website'
     );
   }
 

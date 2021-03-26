@@ -100,10 +100,25 @@ class LocationController extends APIController
       return sizeof($result) > 0 ? $result[0] : null;
     }
 
+    public function getByParamsWithCode($column, $value){
+      $result = Location::where($column, '=', $value)->where('code', '!=', null)->limit(1)->get();
+      return sizeof($result) > 0 ? $result[0] : null;
+    }
+
 
     public function getColumnValueByParams($column, $value, $returnColumn){
       $result = Location::where($column, '=', $value)->get();
       return sizeof($result) > 0 ? $result[0][$returnColumn] : null;
+    }
+
+    public function getCodeByLocalityAndCountry($id){
+      $result = Location::where('id', '=', $id)->get();
+      if(sizeof($result) > 0){
+        $location = Location::where('locality', 'like', '%'.$result[0]['locality'].'%')->where('country', 'like', '%'.$result[0]['country'].'%')->where('code', '!=', null)->limit(1)->get();
+        return sizeof($location) > 0 ? $location[0]['code'] : null;
+      }else{
+        return null;
+      }
     }
 
     public function getAppenedLocationByParams($column, $value, $merchantId){
