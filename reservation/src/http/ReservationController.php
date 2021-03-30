@@ -27,6 +27,7 @@ class ReservationController extends APIController
 				$result[$i]['reservee'] = $this->retrieveNameOnly($result[$i]['account_id']);
 				$result[$i]['synqt'] = app($this->synqtClass)->retrieveByParams('id', $result[$i]['payload_value']);
                 $result[$i]['merchant'] = app($this->merchantClass)->getByParams('id', $result[$i]['merchant_id']);
+				$result[$i]['date_time_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['datetime'])->copy()->tz($this->response['timezone'])->format('F j, Y H:i A');
 
 			 $i++;
 			}
