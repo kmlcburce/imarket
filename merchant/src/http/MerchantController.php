@@ -92,6 +92,11 @@ class MerchantController extends APIController
     return $this->response();
   }
 
+  public function updateByParams($column, $value, $data){
+    $result = Merchant::where($column, '=', $value)->update($data);
+    return $result;
+  }
+
   public function getOrderNumber($accountId){
     $account = Merchant::where('id', '=', $accountId)->first();
     if($account){
