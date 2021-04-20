@@ -4,6 +4,7 @@ namespace Increment\Imarket\Reservation\Http;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
+use App\TopChoice;
 use Increment\Imarket\Reservation\Models\Reservation;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -34,5 +35,19 @@ class ReservationController extends APIController
 			$this->response['data'] = $result;
 		}
 		return $this->response();
+	}
+
+	public function create(Request $request){
+		$data = $request->all();
+		$this->model = new Reservation();
+		$this->insertDB($data);
+		if($this->response['data'] !== null){
+			TopChoice::where('synqt_id', '=', $this->response['data'])->update(array(
+				'deleted_at' => Carbon::now()
+			));
+		}
+
+		return $this->response();
+
 	}
 }
