@@ -13,6 +13,7 @@ class ReservationController extends APIController
 
 	public $synqtClass = 'App\Http\Controllers\SynqtController';
     public $merchantClass = 'Increment\Imarket\Merchant\Http\MerchantController';
+	public $messengerGroupClass = 'Increment\Messenger\Http\MessengerGroupController';
 
    	function __construct(){
    		$this->model = new Reservation();
@@ -29,7 +30,7 @@ class ReservationController extends APIController
 				$result[$i]['synqt'] = app($this->synqtClass)->retrieveByParams('id', $result[$i]['payload_value']);
                 $result[$i]['merchant'] = app($this->merchantClass)->getByParams('id', $result[$i]['merchant_id']);
 				$result[$i]['date_time_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['datetime'])->copy()->tz($this->response['timezone'])->format('F j, Y H:i A');
-
+				$result[$i]['group'] = app($this->messengerGroupClass)->getMembersByParams('payload', $result[$i]['payload_value'], ['id', 'title']);
 			 $i++;
 			}
 			$this->response['data'] = $result;
