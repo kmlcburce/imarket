@@ -22,7 +22,8 @@ class ReservationController extends APIController
 	public function retrieve(Request $request){
 		$data = $request->all();
 		$con = $data['condition'];
-		$result = Reservation::where($con[0]['column'], $con[0]['clause'], $con[0]['value'])->offset($data['offset'])->limit($data['limit'])->get();
+		$result = Reservation::where($con[0]['column'], $con[0]['clause'], $con[0]['value'])
+			->where($con[1]['column'], $con[1]['clause'], $con[1]['value'])->offset($data['offset'])->limit($data['limit'])->get();
 		if(sizeof($result) > 0){
 			$i = 0;
 			foreach ($result as $key) {
@@ -30,7 +31,7 @@ class ReservationController extends APIController
 				$result[$i]['synqt'] = app($this->synqtClass)->retrieveByParams('id', $result[$i]['payload_value']);
                 $result[$i]['merchant'] = app($this->merchantClass)->getByParams('id', $result[$i]['merchant_id']);
 				$result[$i]['date_time_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['datetime'])->copy()->tz($this->response['timezone'])->format('F j, Y H:i A');
-				$result[$i]['group'] = app($this->messengerGroupClass)->getMembersByParams('payload', $result[$i]['payload_value'], ['id', 'title']);
+				$result[$i]['members'] = app($this->messengerGroupClass)->getMembersByParams('payload', $result[$i]['payload_value'], ['id', 'title']);
 			 $i++;
 			}
 			$this->response['data'] = $result;
