@@ -44,7 +44,7 @@ class ReservationController extends APIController
 		$this->model = new Reservation();
 		$this->insertDB($data);
 		if($this->response['data'] !== null){
-			TopChoice::where('synqt_id', '=', $this->response['data'])->update(array(
+			TopChoice::where('synqt_id', '=', $data['payload_value'])->update(array(
 				'deleted_at' => Carbon::now()
 			));
 		}
