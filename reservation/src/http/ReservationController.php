@@ -52,4 +52,9 @@ class ReservationController extends APIController
 		return $this->response();
 
 	}
+
+	public function retrieveByParams($whereArray, $returns){
+		$result = Reservation::where($whereArray)->get($returns);
+		return sizeof($result) > 0 ? $result[0] : null;
+	}
 }

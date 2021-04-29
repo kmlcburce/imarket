@@ -136,4 +136,27 @@ class MerchantController extends APIController
     $result = Merchant::where($column, '=', $value)->get();
     return sizeof($result) > 0 ? $result[0][$param] : null;
   }
+
+
+  public function retriveMerchantWithRating(Request $request){
+    $data = $request->all();
+    $reservation = app('Increment\Imarket\Reservation\Http\ReservationController')->retrieveByParams(
+      array(
+      array('deleted_at', '=', null),
+      array('payload_value', '=', $data['synqtId'])
+      ),
+      ['merchant_id']
+    );
+    if($reservation !== null){
+      $result = Merchant::where('id', '=', $reservation['merchant_id'])->where('deleted_at', '=', null)->get();
+      if(sizeof($result) > 0){
+        $i = 0;
+        foreach ($result as $value) {
+          $result[$i]['rating'] = app('Increment\Common\Rating\Http\RatingController')->getRatingByParams('payload_value', $result[$i]['id']);
+        }
+        $this->response['data'] = $result;
+      }
+    }
+    return $this->response();
+ }
 }
