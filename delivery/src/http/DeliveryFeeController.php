@@ -28,9 +28,6 @@ class DeliveryFeeController extends APIController
         $data['code'] = $this->generateCode();
         $this->model = new DeliveryFee();
         $this->insertDB($data);
-        $keyname = "deliveryfee_".$request['scope'];
-        $lifespan = Carbon::now()->addMinutes(3600);
-        Cache::add($keyname, $data, $lifespan);
         return $this->response();
     }
 
