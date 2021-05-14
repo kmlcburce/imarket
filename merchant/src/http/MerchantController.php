@@ -76,6 +76,25 @@ class MerchantController extends APIController
     return $this->response();
   }
 
+  public function retrieveMerchants(Request $request){
+    $data = $request->all();
+    $this->model = new Merchant();
+    $this->retrieveDB($data);
+    $result = $this->response['data'];
+    if(sizeof($result) > 0){
+      $i = 0;
+      foreach ($result as $key) {
+        $accountId = $result[$i]['account_id'];
+        $this->response['data'][$i]['account'] = $this->retrieveAccountDetails($accountId);
+        if(env('RATING') == true){
+          $this->response['data'][$i]['rating'] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload('merchant', $accountId);
+        }
+        $i++;
+      }
+    }
+    return $this->response();
+  }
+
   public function retrieveAll(Request $request){
     $data = $request->all();    
     $this->model = new Merchant();
