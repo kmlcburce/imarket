@@ -26,7 +26,11 @@ class ReservationController extends APIController
 		$data = $request->all();
 		$con = $data['condition'];
 		$result = Reservation::where($con[0]['column'], $con[0]['clause'], $con[0]['value'])
-			->where($con[1]['column'], $con[1]['clause'], $con[1]['value'])->offset($data['offset'])->limit($data['limit'])->get();
+			->where($con[1]['column'], $con[1]['clause'], $con[1]['value'])
+			->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])
+			->offset($data['offset'])->limit($data['limit'])
+			->orderBy(array_keys($data['sort'])[0], $data['sort'][array_keys($data['sort'])[0]])
+			->get();
 		if(sizeof($result) > 0){
 			$i = 0;
 			foreach ($result as $key) {
