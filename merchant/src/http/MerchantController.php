@@ -92,7 +92,7 @@ class MerchantController extends APIController
       foreach ($result as $key) {
         $accountId = $result[$i]['account_id'];
         $this->response['data'][$i]['account'] = $this->retrieveAccountDetails($accountId);
-        $this->response['data'][$i]['total_super_likes'] = app('App\Http\Controllers\TopChoiceController')->countByParams('merchant_id', $result[$i]['id'], 'super-like');
+        $this->response['data'][$i]['total_super_likes'] = app('App\Http\Controllers\TopChoiceController')->countByParams('payload_value', $result[$i]['id'], 'super-like');
         if (env('RATING') == true) {
           $this->response['data'][$i]['rating'] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload('merchant', $accountId);
         }
