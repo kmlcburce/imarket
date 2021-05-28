@@ -38,6 +38,7 @@ class DeliveryFeeController extends APIController
       }
 
       $this->retrieveDB($request->all());
+      $this->response['size'] = DeliveryFee::where('deleted_at', '=', null)->count();
       return $this->response();
     //   public function retrieve(Request $request)
     // {

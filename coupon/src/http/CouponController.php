@@ -50,10 +50,10 @@ class CouponController extends APIController
 		$data = $request->all();
 		$results = DB::table('coupons')
 			->limit($data['limit'])
-			->skip($data['offset'])
+			->offset($data['offset'])
 			->get();
 		$this->response['data'] = $results;
-		$this->response['size'] = count(DB::table('coupons')->get());
+		$this->response['size'] = Coupon::where('deleted_at', '=', null)->count();
 		return $this->response();
 	}
 }
