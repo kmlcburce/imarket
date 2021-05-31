@@ -42,7 +42,6 @@ class ReservationController extends APIController
 			$i = 0;
 			foreach ($result as $key) {
 				$result[$i]['reservee'] = $this->retrieveNameOnly($result[$i]['account_id']);
-				$merchantId = app($this->merchantClass)->getByParams('account_id',$con[0]['value']);
 				$result[$i]['synqt'] = app($this->synqtClass)->retrieveByParams('id', $result[$i]['payload_value']);
                 $result[$i]['merchant'] = app($this->merchantClass)->getByParams('id', $result[$i]['merchant_id']);
 				$result[$i]['distance'] = app($this->locationClass)->getLocationDistance('account_id', $result[$i]['merchant']['account_id'], $con[0]['value']);
