@@ -209,4 +209,8 @@ class LocationController extends APIController
       };
       return $this->response();
     }
+
+    public function getAllLocation(){
+      return Location::get();
+    }
 }

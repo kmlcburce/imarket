@@ -8,6 +8,8 @@ use Increment\Imarket\Merchant\Models\Merchant;
 use Increment\Imarket\Cart\Models\Checkout;
 use Carbon\Carbon;
 
+use function GuzzleHttp\json_decode;
+
 class MerchantController extends APIController
 {
   function __construct()
@@ -91,6 +93,7 @@ class MerchantController extends APIController
       $i = 0;
       foreach ($result as $key) {
         $accountId = $result[$i]['account_id'];
+        $this->response['data'][$i]['schedule'] = json_decode($this->response['data'][$i]['schedule'], true);
         $this->response['data'][$i]['account'] = $this->retrieveAccountDetails($accountId);
         $this->response['data'][$i]['total_super_likes'] = app('App\Http\Controllers\TopChoiceController')->countByParams('payload_value', $result[$i]['id'], 'super-like');
         if (env('RATING') == true) {
