@@ -115,6 +115,17 @@ class LocationController extends APIController
       return $scope_array;
     }
 
+    public function getScope($value){
+      $scope = Location::select("code")
+      ->where("id", $value)
+      ->get();
+      if (count($scope) == 0){
+        return [];
+      }
+      $scope_array = explode(',',$scope[0]["code"]);
+      return $scope_array;
+    }
+
 
     public function getByParams($column, $value){
       $result = Location::where($column, '=', $value)->get();
@@ -128,7 +139,10 @@ class LocationController extends APIController
 
     public function getByParamsWithCodeScope($column, $value){
       $result = Location::select('id')->where($column, '=', $value)->where('code', '!=', null)->limit(1)->get();
-      return sizeof($result) > 0 ? $result[0] : null;
+      if($result > 0){
+        $this->getLocationScope($result[0]);
+      }
+      // return sizeof($result) > 0 ? $result[0] : null;
     }
 
 
