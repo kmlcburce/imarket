@@ -176,8 +176,8 @@ class LocationController extends APIController
       }
     }
 
-    public function getLocationDistance($column, $value, $merchantId){
-      $from = $this->getByParams('merchant_id', $merchantId);
+    public function getLocationDistance($column, $value, $accountId){
+      $from = $this->getByParams('account_id', $accountId);
       $to = $this->getByParams($column, $value);
       $distance = null;
       if($to){
@@ -222,5 +222,9 @@ class LocationController extends APIController
         $this->response['data'] = 'true';
       };
       return $this->response();
+    }
+
+    public function getAllLocation(){
+      return Location::get();
     }
 }
