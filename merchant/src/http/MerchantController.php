@@ -7,6 +7,8 @@ use App\Http\Controllers\APIController;
 use Increment\Imarket\Merchant\Models\Merchant;
 use Increment\Imarket\Cart\Models\Checkout;
 use Carbon\Carbon;
+use App\Synqt;
+use Illuminate\Support\Facades\DB;
 
 use function GuzzleHttp\json_decode;
 
@@ -20,6 +22,7 @@ class MerchantController extends APIController
       'name', 'address', 'prefix', 'logo', 'website', 'email', 'schedule', 'website', 'addition_informations'
     );
   }
+  public $locationClass = 'Increment\Imarket\Location\Http\LocationController';
 
   public function create(Request $request)
   {
@@ -86,20 +89,37 @@ class MerchantController extends APIController
   public function retrieveMerchants(Request $request)
   {
     $data = $request->all();
-    $this->model = new Merchant();
-    $this->retrieveDB($data);
-    $result = $this->response['data'];
-    if (sizeof($result) > 0) {
+    $synqt = Synqt::where('id', '=', $data['synqt_id'])->where('deleted_at', '=', null)->get();
+    $result = array();
+    if (sizeof($synqt) > 0) {
+      $condition = json_decode($synqt[0]['details'], true);
+      $locations = app($this->locationClass)->getAllLocation();
       $i = 0;
-      foreach ($result as $key) {
-        $accountId = $result[$i]['account_id'];
-        // $this->response['data'][$i]['schedule'] = $this->response['data'][$i]['schedule'] !== null ? json_decode($this->response['data'][$i]['schedule'], true) : null;
-        $this->response['data'][$i]['account'] = $this->retrieveAccountDetails($accountId);
-        if (env('RATING') == true) {
-          $this->response['data'][$i]['rating'] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload('merchant', $accountId);
+      foreach ($locations as $key) {
+        $distance = app($this->locationClass)->getLocationDistance('account_id', $synqt[0]['account_id'], $key['account_id']);
+        $totalDistance = preg_replace('/[^0-9.]+/', '', $distance);
+        if ($totalDistance < $condition['radius']) {
+          $result = DB::table('products as T1')
+            ->leftJoin('pricings as T2', 'T1.id', '=', 'T2.product_id')
+            ->where('T2.price', '>=', $condition['price_range']['min'])
+            ->where('T2.price', '<=', $condition['price_range']['max'])
+            ->where('T1.account_id', '=', $key['account_id'])
+            ->get();
+          $result = json_decode(json_encode($result), true);
+          $j = 0;
+          if(sizeof($result) > 0){
+            foreach ($result as $value) {
+              $result[$j]['account'] = $this->retrieveAccountDetails($result[$j]['account_id']);
+              $merchant_id = Merchant::where('account_id', '=', $result[$j]['account_id'])->get();
+              $result[$j]['account'] = $this->retrieveAccountDetails($result[$j]['account_id']);
+              $result[$j]['rating'] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload('merchant_id', $merchant_id[0]['id']);
+              $j++;
+            }
+          }
         }
         $i++;
       }
+      $this->response['data'] = $result;
     }
     return $this->response();
   }

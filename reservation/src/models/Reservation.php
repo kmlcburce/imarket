@@ -7,5 +7,5 @@ use Carbon\Carbon;
 class Reservation extends APIModel
 {
     protected $table = 'reservations';
-    protected $fillable = ['account_id', 'merchant_id', 'payload', 'payload_value', 'details', 'datetime', 'status'];
+    protected $fillable = ['account_id','code', 'merchant_id', 'payload', 'payload_value', 'details', 'datetime', 'status'];
 }
