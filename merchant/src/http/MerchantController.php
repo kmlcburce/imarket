@@ -10,8 +10,6 @@ use Carbon\Carbon;
 use App\Synqt;
 use Illuminate\Support\Facades\DB;
 
-use function GuzzleHttp\json_decode;
-
 class MerchantController extends APIController
 {
   function __construct()
@@ -95,17 +93,27 @@ class MerchantController extends APIController
       $condition = json_decode($synqt[0]['details'], true);
       $locations = app($this->locationClass)->getAllLocation();
       $i = 0;
+      $result = [];
       foreach ($locations as $key) {
         $distance = app($this->locationClass)->getLocationDistance('account_id', $synqt[0]['account_id'], $key['account_id']);
         $totalDistance = preg_replace('/[^0-9.]+/', '', $distance);
         if ($totalDistance < $condition['radius']) {
-          $result = DB::table('products as T1')
-            ->leftJoin('pricings as T2', 'T1.id', '=', 'T2.product_id')
-            ->where('T2.price', '>=', $condition['price_range']['min'])
-            ->where('T2.price', '<=', $condition['price_range']['max'])
-            ->where('T1.account_id', '=', $key['account_id'])
+          $products = DB::table('products')->where('account_id', '=', $key['account_id'])->get();
+          $products = json_decode(json_encode($products), true);
+          $a=0;
+          foreach ($products as $prod) {
+            $pricing = DB::table('pricings')->where('product_id', '=', $prod['id'])
+            ->where('price', '>=', $condition['price_range']['min'])
+            ->where('price', '<=', $condition['price_range']['max'])
             ->get();
-          $result = json_decode(json_encode($result), true);
+            $pricing = json_decode(json_encode($pricing), true);
+            if(sizeof($pricing) > 0){
+              array_push($result, $products[$a]);
+            }else{
+              array_push($result, $products[$a]);
+            }
+            $a++;
+          }
           $j = 0;
           if(sizeof($result) > 0){
             foreach ($result as $value) {
