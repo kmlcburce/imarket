@@ -10,9 +10,6 @@ use Carbon\Carbon;
 use App\Synqt;
 use Illuminate\Support\Facades\DB;
 
-use function GuzzleHttp\json_decode;
-use function GuzzleHttp\json_encode;
-
 class MerchantController extends APIController
 {
   function __construct()
