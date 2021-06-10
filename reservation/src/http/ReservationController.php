@@ -108,14 +108,14 @@ class ReservationController extends APIController
 			'code' => $this->generateCode(),
 			'status' => ucfirst($data['status'])
 		);
-		$email = app($this->emailClass)->receipSynqt($emailData, $reservation[0]['account_id']);
-		if ($email !== null) {
-			$result = Reservation::where('id', '=', $data['id'])->update(array(
-				'status' => $data['status'],
-				'code' => $this->generateCode(),
-			));
-			$this->response['data'] = $result;
-		}
+		// $email = app($this->emailClass)->receipSynqt($emailData, $reservation[0]['account_id']);
+		// if ($email !== null) {
+		$result = Reservation::where('id', '=', $data['id'])->update(array(
+			'status' => $data['status'],
+			'code' => $this->generateCode(),
+		));
+		$this->response['data'] = $result;
+		// }
 		return $this->response();
 	}
 }
