@@ -118,7 +118,6 @@ class MerchantController extends APIController
               $merchant[$m]['account'] = $this->retrieveAccountDetails($merchantKey['account_id']);
               $merchant[$m]['rating'] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload('account_id', $merchantKey['account_id']);
 
-              dd($merchant);
             }
             $i++;
           }
