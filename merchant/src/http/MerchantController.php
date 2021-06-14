@@ -91,34 +91,38 @@ class MerchantController extends APIController
     if (sizeof($synqt) > 0) {
       $condition = json_decode($synqt[0]['details'], true);
       $locations = app($this->locationClass)->getAllLocation();
-      $merchant = Merchant::where('account_id', '=', $synqt[0]['account_id'])->get();
+      $merchant = Merchant::get();
       $i = 0;
-      foreach ($locations as $key) {
-        $distance = app($this->locationClass)->getLocationDistance('account_id', $synqt[0]['account_id'], $key['account_id']);
-        $totalDistance = preg_replace('/[^0-9.]+/', '', $distance);
-        if ($totalDistance < $condition['radius']) {
-          $products = DB::table('products')->where('merchant_id', '=', $merchant[0]['id'])->get();
-          $products = json_decode(json_encode($products), true);
-          $a = 0;
-          foreach ($products as $prod) {
-            $pricing = DB::table('pricings')->where('product_id', '=', $prod['id'])
-              ->where('price', '>=', $condition['price_range']['min'])
-              ->where('price', '<=', $condition['price_range']['max'])
-              ->get();
-            $pricing = json_decode(json_encode($pricing), true);
-            if (sizeof($pricing) > 0) {
-              $products[$a]['pricing'] = $pricing;
+      if (sizeof($merchant) > 0) {
+        $m = 0;
+        foreach ($merchant as $merchantKey) {
+          foreach ($locations as $key) {
+            $distance = app($this->locationClass)->getLocationDistance('account_id', $synqt[0]['account_id'], $key['account_id']);
+            $totalDistance = preg_replace('/[^0-9.]+/', '', $distance);
+            if ($totalDistance < $condition['radius']) {
+              $products = DB::table('products')->where('merchant_id', '=', $merchantKey['id'])->get();
+              $products = json_decode(json_encode($products), true);
+              $a = 0;
+              foreach ($products as $prod) {
+                $pricing = DB::table('pricings')->where('product_id', '=', $prod['id'])
+                  ->where('price', '>=', $condition['price_range']['min'])
+                  ->where('price', '<=', $condition['price_range']['max'])
+                  ->get();
+                $pricing = json_decode(json_encode($pricing), true);
+                if (sizeof($pricing) > 0) {
+                  $products[$a]['pricing'] = $pricing;
+                }
+                $a++;
+              }
+              $merchant[$m]['products'] = $products;
+              $merchant[$m]['account'] = $this->retrieveAccountDetails($merchantKey['account_id']);
+              $merchant[$m]['rating'] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload('account_id', $merchantKey['account_id']);
+
             }
-            $a++;
+            $i++;
           }
-          $merchant[0]['products'] = $products;
-          if (sizeof($merchant) > 0) {
-            $merchant_id = Merchant::where('account_id', '=', $merchant[0]['account_id'])->get();
-            $merchant[0]['account'] = $this->retrieveAccountDetails($merchant[0]['account_id']);
-            $merchant[0]['rating'] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload('account_id', $merchant[0]['account_id']);
-          }
+          $m++;
         }
-        $i++;
       }
       $this->response['data'] = $merchant;
     }
