@@ -91,7 +91,7 @@ class MerchantController extends APIController
     if (sizeof($synqt) > 0) {
       $condition = json_decode($synqt[0]['details'], true);
       $locations = app($this->locationClass)->getAllLocation();
-      $merchant = Merchant::get();
+      $merchant = Merchant::limit($data['limit'])->offset($data['offset'])->get();
       $i = 0;
       if (sizeof($merchant) > 0) {
         $m = 0;
