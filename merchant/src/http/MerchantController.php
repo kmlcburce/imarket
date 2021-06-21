@@ -21,6 +21,7 @@ class MerchantController extends APIController
     );
   }
   public $locationClass = 'Increment\Imarket\Location\Http\LocationController';
+  public $imageClass = 'Increment\Common\Image\Http\ImageController';
 
   public function create(Request $request)
   {
@@ -115,10 +116,10 @@ class MerchantController extends APIController
                 $a++;
               }
               $merchant[$m]['products'] = $products;
-              $merchant[$m]['account'] = $this->retrieveAccountDetails($merchantKey['account_id']);
-              $merchant[$m]['rating'] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload('account_id', $merchantKey['account_id']);
-
             }
+            $merchant[$m]['account'] = $this->retrieveAccountDetails($merchantKey['account_id']);
+            $merchant[$m]['rating'] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload('merchant_id', $merchantKey['id']);
+            $merchant[$m]['featured_photos'] = app($this->imageClass)->retrieveFeaturedPhotos('account_id', $merchantKey['account_id'], 'category', 'featured-photo');
             $i++;
           }
           $m++;
