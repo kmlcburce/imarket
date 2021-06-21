@@ -91,41 +91,28 @@ class MerchantController extends APIController
     $synqt = Synqt::where('id', '=', $data['synqt_id'])->where('deleted_at', '=', null)->get();
     if (sizeof($synqt) > 0) {
       $condition = json_decode($synqt[0]['details'], true);
-      $locations = app($this->locationClass)->getAllLocation();
-      $merchant = Merchant::get();
-      $i = 0;
-      if (sizeof($merchant) > 0) {
-        $m = 0;
-        foreach ($merchant as $merchantKey) {
-          foreach ($locations as $key) {
-            $distance = app($this->locationClass)->getLocationDistance('account_id', $synqt[0]['account_id'], $key['account_id']);
-            $totalDistance = preg_replace('/[^0-9.]+/', '', $distance);
-            if ($totalDistance < $condition['radius']) {
-              $products = DB::table('products')->where('merchant_id', '=', $merchantKey['id'])->get();
-              $products = json_decode(json_encode($products), true);
-              $a = 0;
-              foreach ($products as $prod) {
-                $pricing = DB::table('pricings')->where('product_id', '=', $prod['id'])
-                  ->where('price', '>=', $condition['price_range']['min'])
-                  ->where('price', '<=', $condition['price_range']['max'])
-                  ->get();
-                $pricing = json_decode(json_encode($pricing), true);
-                if (sizeof($pricing) > 0) {
-                  $products[$a]['pricing'] = $pricing;
-                }
-                $a++;
-              }
-              $merchant[$m]['products'] = $products;
-            }
-            $merchant[$m]['account'] = $this->retrieveAccountDetails($merchantKey['account_id']);
-            $merchant[$m]['rating'] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload('merchant_id', $merchantKey['id']);
-            $merchant[$m]['featured_photos'] = app($this->imageClass)->retrieveFeaturedPhotos('account_id', $merchantKey['account_id'], 'category', 'featured-photo');
-            $i++;
+      $owner = Merchant::where('account_id', '=', $synqt[0]['account_id'])->get();
+      $others = Merchant::limit($data['limit'])->offset($data['offset'])->get();
+      if(sizeof($others) > 0){  
+        $i = 0;
+        foreach ($others as $value) {
+          $distance = app($this->locationClass)->getLocationDistanceByMerchant(json_decode($owner[0]['address']), json_decode($value['address']));
+          $totalDistance = preg_replace('/[^0-9.]+/', '', $distance);
+          if($totalDistance < $condition['radius']){
+            $products = DB::table('products as T1')
+              ->leftJoin('pricings as T2', 'T2.product_id', '=', 'T1.id')
+              ->where('T2.price', '>=', $condition['price_range']['min'])
+              ->where('T2.price', '<=', $condition['price_range']['max'])
+              ->where('T1.merchant_id', '=', $value['id'])->get();
+            $others[$i]['products'] = $products;
           }
-          $m++;
+          $others[$i]['account'] = $this->retrieveAccountDetails($value['account_id']);
+          $others[$i]['rating'] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload('merchant_id', $value['id']);
+          $others[$i]['featured_photos'] = app($this->imageClass)->retrieveFeaturedPhotos('account_id', $value['account_id'], 'category', 'featured-photo');
+          $i++;
         }
+        $this->response['data'] = $others;
       }
-      $this->response['data'] = $merchant;
     }
     return $this->response();
   }

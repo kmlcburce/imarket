@@ -177,13 +177,11 @@ class LocationController extends APIController
       }
     }
 
-    public function getLocationByLocationId($column, $value, $locationsId){
-      $from = $this->getByParams('id', $locationsId);
-      $to = $this->getByParams($column, $value);
+    public function getLocationDistanceByMerchant($from, $to){
       $distance = null;
       if($to){
         if($from){
-          $distance = $this->getLongLatDistance($from['latitude'], $from['longitude'], $to['latitude'], $to['longitude']);
+          $distance = $this->getLongLatDistance($from->latitude, $from->longitude, $to->latitude, $to->longitude);
           $distance = round($distance, 1);
         }
         return $distance.'km';
