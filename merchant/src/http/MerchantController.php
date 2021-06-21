@@ -91,12 +91,11 @@ class MerchantController extends APIController
     $synqt = Synqt::where('id', '=', $data['synqt_id'])->where('deleted_at', '=', null)->get();
     if (sizeof($synqt) > 0) {
       $condition = json_decode($synqt[0]['details'], true);
-      $owner = Merchant::where('account_id', '=', $synqt[0]['account_id'])->get();
       $others = Merchant::limit($data['limit'])->offset($data['offset'])->get();
       if(sizeof($others) > 0){  
         $i = 0;
         foreach ($others as $value) {
-          $distance = app($this->locationClass)->getLocationDistanceByMerchant(json_decode($owner[0]['address']), json_decode($value['address']));
+          $distance = app($this->locationClass)->getLocationDistanceByMerchant(json_decode($synqt[0]['location_id']), json_decode($value['address']));
           $totalDistance = preg_replace('/[^0-9.]+/', '', $distance);
           if($totalDistance < $condition['radius']){
             $products = DB::table('products as T1')
