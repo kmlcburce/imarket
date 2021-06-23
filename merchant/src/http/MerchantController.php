@@ -89,6 +89,7 @@ class MerchantController extends APIController
   {
     $data = $request->all();
     $synqt = Synqt::where('id', '=', $data['synqt_id'])->where('deleted_at', '=', null)->get();
+    $result = [];
     if (sizeof($synqt) > 0) {
       $condition = json_decode($synqt[0]['details'], true);
       $others = Merchant::limit($data['limit'])->offset($data['offset'])->get();
@@ -97,20 +98,22 @@ class MerchantController extends APIController
         foreach ($others as $value) {
           $distance = app($this->locationClass)->getLocationDistanceByMerchant(json_decode($synqt[0]['location_id']), json_decode($value['address']));
           $totalDistance = preg_replace('/[^0-9.]+/', '', $distance);
-          if($totalDistance < $condition['radius']){
+          if($totalDistance <= $condition['radius']){
             $products = DB::table('products as T1')
               ->leftJoin('pricings as T2', 'T2.product_id', '=', 'T1.id')
               ->where('T2.price', '>=', $condition['price_range']['min'])
               ->where('T2.price', '<=', $condition['price_range']['max'])
               ->where('T1.merchant_id', '=', $value['id'])->get();
             $others[$i]['products'] = $products;
+            $others[$i]['account'] = $this->retrieveAccountDetails($value['account_id']);
+            $others[$i]['rating'] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload('merchant_id', $value['id']);
+            $others[$i]['featured_photos'] = app($this->imageClass)->retrieveFeaturedPhotos('account_id', $value['account_id'], 'category', 'featured-photo');
+
+            array_push($result, $others[$i]);
           }
-          $others[$i]['account'] = $this->retrieveAccountDetails($value['account_id']);
-          $others[$i]['rating'] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload('merchant_id', $value['id']);
-          $others[$i]['featured_photos'] = app($this->imageClass)->retrieveFeaturedPhotos('account_id', $value['account_id'], 'category', 'featured-photo');
           $i++;
         }
-        $this->response['data'] = $others;
+        $this->response['data'] = $result;
       }
     }
     return $this->response();
