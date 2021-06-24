@@ -106,7 +106,7 @@ class ReservationController extends APIController
 					$res[$i]['reservee'] = $this->retrieveNameOnly($res[$i]['account_id']);
 					$res[$i]['synqt'] = app($this->synqtClass)->retrieveByParams('id', $res[$i]['payload_value']);
 					$res[$i]['merchant'] = app($this->merchantClass)->getByParams('id', $res[$i]['merchant_id']);
-					$res[$i]['distance'] = app($this->locationClass)->getLocationDistance('id', $res[$i]['synqt'][0]['location_id'], $res[$i]['merchant']['account_id']);
+					$res[$i]['distance'] = app($this->locationClass)->getLocationDistanceByMerchant($res[$i]['synqt'][0]['location_id'], json_decode($res[$i]['merchant']['address']));
 					$res[$i]['total_super_likes'] = app($this->topChoiceClass)->countByParams('synqt_id', $res[$i]['payload_value'], 'super-like');
 					$res[$i]['rating'] = app($this->ratingClass)->getRatingByPayload('merchant_id', $res[$i]['merchant_id']);
 					$res[$i]['date_time_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $res[$i]['datetime'])->copy()->tz($this->response['timezone'])->format('F j, Y H:i A');
