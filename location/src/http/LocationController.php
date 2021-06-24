@@ -52,6 +52,7 @@ class LocationController extends APIController
       return $this->response();
     }
 
+
     public function getLongLatDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371){
       
       //$latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371
@@ -93,6 +94,14 @@ class LocationController extends APIController
       $b = sin($latFrom) * sin($latTo) + cos($latFrom) * cos($latTo) * cos($lonDelta);
       $angle = atan2(sqrt($a), $b);
       return number_format($angle * $earthRadius, 2);
+    }
+
+    public function getRequestDistance(Request $request){
+      $resultval = [];
+      $data = $request->all();
+      $resultval = $this->getLongLatDistance($data['latitudeFrom'], $data['longitudeFrom'], $data['latitudeTo'], $data['longitudeTo']);
+      $this->response['data'] = number_format($resultval, 2);
+      return $this->response();
     }
 
     public function getDistanceFromMerchant($merchantId, $id){
