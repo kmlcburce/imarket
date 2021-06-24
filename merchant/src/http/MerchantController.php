@@ -7,8 +7,8 @@ use App\Http\Controllers\APIController;
 use Increment\Imarket\Merchant\Models\Merchant;
 use Increment\Imarket\Cart\Models\Checkout;
 use Carbon\Carbon;
-
-use function GuzzleHttp\json_decode;
+use App\Synqt;
+use Illuminate\Support\Facades\DB;
 
 class MerchantController extends APIController
 {
@@ -20,6 +20,8 @@ class MerchantController extends APIController
       'name', 'address', 'prefix', 'logo', 'website', 'email', 'schedule', 'website', 'addition_informations'
     );
   }
+  public $locationClass = 'Increment\Imarket\Location\Http\LocationController';
+  public $imageClass = 'Increment\Common\Image\Http\ImageController';
 
   public function create(Request $request)
   {
@@ -86,20 +88,32 @@ class MerchantController extends APIController
   public function retrieveMerchants(Request $request)
   {
     $data = $request->all();
-    $this->model = new Merchant();
-    $this->retrieveDB($data);
-    $result = $this->response['data'];
-    if (sizeof($result) > 0) {
-      $i = 0;
-      foreach ($result as $key) {
-        $accountId = $result[$i]['account_id'];
-        $this->response['data'][$i]['schedule'] = json_decode($this->response['data'][$i]['schedule'], true);
-        $this->response['data'][$i]['account'] = $this->retrieveAccountDetails($accountId);
-        $this->response['data'][$i]['total_super_likes'] = app('App\Http\Controllers\TopChoiceController')->countByParams('payload_value', $result[$i]['id'], 'super-like');
-        if (env('RATING') == true) {
-          $this->response['data'][$i]['rating'] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload('merchant', $accountId);
+    $synqt = Synqt::where('id', '=', $data['synqt_id'])->where('deleted_at', '=', null)->get();
+    $result = [];
+    if (sizeof($synqt) > 0) {
+      $condition = json_decode($synqt[0]['details'], true);
+      $others = Merchant::limit($data['limit'])->offset($data['offset'])->get();
+      if(sizeof($others) > 0){  
+        $i = 0;
+        foreach ($others as $value) {
+          $distance = app($this->locationClass)->getLocationDistanceByMerchant(json_decode($synqt[0]['location_id']), json_decode($value['address']));
+          $totalDistance = preg_replace('/[^0-9.]+/', '', $distance);
+          if($totalDistance <= $condition['radius']){
+            $products = DB::table('products as T1')
+              ->leftJoin('pricings as T2', 'T2.product_id', '=', 'T1.id')
+              ->where('T2.price', '>=', $condition['price_range']['min'])
+              ->where('T2.price', '<=', $condition['price_range']['max'])
+              ->where('T1.merchant_id', '=', $value['id'])->get();
+            $others[$i]['products'] = $products;
+            $others[$i]['account'] = $this->retrieveAccountDetails($value['account_id']);
+            $others[$i]['rating'] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload('merchant_id', $value['id']);
+            $others[$i]['featured_photos'] = app($this->imageClass)->retrieveFeaturedPhotos('account_id', $value['account_id'], 'category', 'featured-photo');
+
+            array_push($result, $others[$i]);
+          }
+          $i++;
         }
-        $i++;
+        $this->response['data'] = $result;
       }
     }
     return $this->response();
