@@ -12,3 +12,5 @@ Route::post($route.'get_scope', $controller."getLocationScope");
 Route::get($route.'test', $controller."test");
 Route::post($route.'get_km', $controller."getLongLatDistance");
 Route::post($route.'get_distance', $controller."getRemainingDistance");
+Route::post($route.'test', $controller."getByParamsWithCode");
+Route::post($route.'distance_request', $controller."getRequestDistance");

@@ -52,6 +52,7 @@ class LocationController extends APIController
       return $this->response();
     }
 
+
     public function getLongLatDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371){
       
       //$latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371
@@ -95,6 +96,14 @@ class LocationController extends APIController
       return number_format($angle * $earthRadius, 2);
     }
 
+    public function getRequestDistance(Request $request){
+      $resultval = [];
+      $data = $request->all();
+      $resultval = $this->getLongLatDistance($data['latitudeFrom'], $data['longitudeFrom'], $data['latitudeTo'], $data['longitudeTo']);
+      $this->response['data'] = number_format($resultval, 2);
+      return $this->response();
+    }
+
     public function getDistanceFromMerchant($merchantId, $id){
       $from = $this->getByParams('merchant_id', $merchantId);
       $to = $this->getByParams('id', $id);
@@ -107,6 +116,17 @@ class LocationController extends APIController
     public function getLocationScope(Request $request){
       $scope = Location::select("code")
       ->where("id", $request["location_id"])
+      ->get();
+      if (count($scope) == 0){
+        return [];
+      }
+      $scope_array = explode(',',$scope[0]["code"]);
+      return $scope_array;
+    }
+
+    public function getScope($value){
+      $scope = Location::select("code")
+      ->where("id", $value)
       ->get();
       if (count($scope) == 0){
         return [];
@@ -128,7 +148,10 @@ class LocationController extends APIController
 
     public function getByParamsWithCodeScope($column, $value){
       $result = Location::select('id')->where($column, '=', $value)->where('code', '!=', null)->limit(1)->get();
-      return sizeof($result) > 0 ? $result[0] : null;
+      if($result > 0){
+        $this->getLocationScope($result[0]);
+      }
+      // return sizeof($result) > 0 ? $result[0] : null;
     }
 
 
