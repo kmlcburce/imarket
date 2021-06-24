@@ -19,6 +19,7 @@ class ReservationController extends APIController
 	public $topChoiceClass = 'App\Http\Controllers\TopChoiceController';
 	public $locationClass = 'Increment\Imarket\Location\Http\LocationController';
 	public $emailClass = 'App\Http\Controllers\EmailController';
+	public $temp = array();
 
 	function __construct()
 	{
@@ -28,7 +29,7 @@ class ReservationController extends APIController
 		);
 	}
 
-	public function retrieve(Request $request)
+	public function retrieveWeb(Request $request)
 	{
 		$data = $request->all();
 		$con = $data['condition'];
@@ -59,6 +60,61 @@ class ReservationController extends APIController
 				$i++;
 			}
 			$this->response['data'] = $result;
+		}
+		return $this->response();
+	}
+
+	public function retrieve(Request $request)
+	{
+		$data = $request->all();
+		$con = $data['condition'];
+		if (isset($data['filter'])) {
+			$result = Reservation::where($con[0]['column'], $con[0]['clause'], $con[0]['value'])
+				->where($con[1]['column'], $con[1]['clause'], $con[1]['value'])
+				->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])
+				->offset($data['offset'])->limit($data['limit'])->orderBy(array_keys($data['sort'])[0], array_values($data['sort'])[0])->get();
+		} else {
+			$result = DB::table('messenger_members as T1')
+				->leftJoin('messenger_groups as T2', 'T1.messenger_group_id', '=', 'T2.id')
+				->where('T1.' . $con[0]['column'], $con[0]['clause'], $con[0]['value'])
+				->offset($data['offset'])->limit($data['limit'])
+				->orderBy('T1.' . array_keys($data['sort'])[0], $data['sort'][array_keys($data['sort'])[0]])
+				->get();
+
+			$result = json_decode($result, true);
+			// $result = Reservation::where($con[0]['column'], $con[0]['clause'], $con[0]['value'])
+			// 	->where($con[1]['column'], $con[1]['clause'], $con[1]['value'])
+			// 	->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])
+			// 	->offset($data['offset'])->limit($data['limit'])
+			// 	->orderBy(array_keys($data['sort'])[0], $data['sort'][array_keys($data['sort'])[0]])
+			// 	->get();
+		}
+		$res = null;
+		if (sizeof($result) > 0) {
+			$j=0;
+			foreach ($result as $value) {
+				$tempReserv = Reservation::where('payload_value', '=', $value['payload'])
+					->where($con[1]['column'], $con[1]['clause'], $con[1]['value'])
+					->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])->get();
+				array_push($this->temp, $tempReserv[0]);
+				$j++;
+			}
+			$res = $this->temp;
+			if (sizeof($res) > 0) {
+				$i = 0;
+				foreach ($res as $key) {
+					$res[$i]['reservee'] = $this->retrieveNameOnly($res[$i]['account_id']);
+					$res[$i]['synqt'] = app($this->synqtClass)->retrieveByParams('id', $res[$i]['payload_value']);
+					$res[$i]['merchant'] = app($this->merchantClass)->getByParams('id', $res[$i]['merchant_id']);
+					$res[$i]['distance'] = app($this->locationClass)->getLocationDistance('id', $res[$i]['synqt'][0]['location_id'], $res[$i]['merchant']['account_id']);
+					$res[$i]['total_super_likes'] = app($this->topChoiceClass)->countByParams('synqt_id', $res[$i]['payload_value'], 'super-like');
+					$res[$i]['rating'] = app($this->ratingClass)->getRatingByPayload('merchant_id', $res[$i]['merchant_id']);
+					$res[$i]['date_time_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $res[$i]['datetime'])->copy()->tz($this->response['timezone'])->format('F j, Y H:i A');
+					$res[$i]['members'] = app($this->messengerGroupClass)->getMembersByParams('payload', $res[$i]['payload_value'], ['id', 'title']);
+					$i++;
+				}
+				$this->response['data'] = $res;
+			}
 		}
 		return $this->response();
 	}
