@@ -96,7 +96,9 @@ class ReservationController extends APIController
 				$tempReserv = Reservation::where('payload_value', '=', $value['payload'])
 					->where($con[1]['column'], $con[1]['clause'], $con[1]['value'])
 					->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])->get();
-				array_push($this->temp, $tempReserv[0]);
+				if(sizeof($tempReserv) > 0) {
+					array_push($this->temp, $tempReserv[0]);
+				}
 				$j++;
 			}
 			$res = $this->temp;
