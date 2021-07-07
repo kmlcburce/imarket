@@ -89,13 +89,37 @@ class MerchantController extends APIController
   {
     $data = $request->all();
     $synqt = Synqt::where('id', '=', $data['synqt_id'])->where('deleted_at', '=', null)->get();
-    $result = [];
+    $others = [];
+    $res = [];
     if (sizeof($synqt) > 0) {
       $condition = json_decode($synqt[0]['details'], true);
-      $others = Merchant::limit($data['limit'])->offset($data['offset'])->get();
-      if(sizeof($others) > 0){  
-        $i = 0;
-        foreach ($others as $value) {
+      if(sizeof($condition['cuisine']) > 0){
+        $a=0;
+        foreach($condition['cuisine'] as $key){
+          $others = Merchant::limit($data['limit'])->offset($data['offset'])->get();
+          $response = $this->manageResultMerchant($key, $others, $condition, $synqt);
+          if($response !== null){
+            array_push($res, $response);
+          }
+          $a++;
+        }
+        $this->response['data'] = $res;
+      }else{
+        $res = $this->manageResultMerchant(null, $others, $condition, $synqt);
+        $this->response['data'] = $res;
+      }
+      return $this->response();
+    }
+  }
+
+  public function manageResultMerchant($key, $others, $condition, $synqt){
+    $result = [];
+    if(sizeof($others) > 0){  
+      $i = 0;
+      foreach ($others as $value) {
+        $value['addition_informations'] = (array)json_decode($value['addition_informations']);
+        // dd();
+        if(in_array($key, $value['addition_informations']['cuisine'])){
           $distance = app($this->locationClass)->getLocationDistanceByMerchant(json_decode($synqt[0]['location_id']), json_decode($value['address']));
           $totalDistance = preg_replace('/[^0-9.]+/', '', $distance);
           if($totalDistance <= $condition['radius']){
@@ -108,15 +132,30 @@ class MerchantController extends APIController
             $others[$i]['account'] = $this->retrieveAccountDetails($value['account_id']);
             $others[$i]['rating'] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload('merchant_id', $value['id']);
             $others[$i]['featured_photos'] = app($this->imageClass)->retrieveFeaturedPhotos('account_id', $value['account_id'], 'category', 'featured-photo');
-
-            array_push($result, $others[$i]);
+  
+            return $others[$i];
           }
-          $i++;
+        }else{
+          $distance = app($this->locationClass)->getLocationDistanceByMerchant(json_decode($synqt[0]['location_id']), json_decode($value['address']));
+          $totalDistance = preg_replace('/[^0-9.]+/', '', $distance);
+          if($totalDistance <= $condition['radius']){
+            $products = DB::table('products as T1')
+              ->leftJoin('pricings as T2', 'T2.product_id', '=', 'T1.id')
+              ->where('T2.price', '>=', $condition['price_range']['min'])
+              ->where('T2.price', '<=', $condition['price_range']['max'])
+              ->where('T1.merchant_id', '=', $value['id'])->get();
+            $others[$i]['products'] = $products;
+            $others[$i]['account'] = $this->retrieveAccountDetails($value['account_id']);
+            $others[$i]['rating'] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload('merchant_id', $value['id']);
+            $others[$i]['featured_photos'] = app($this->imageClass)->retrieveFeaturedPhotos('account_id', $value['account_id'], 'category', 'featured-photo');
+  
+            return $others[$i];
+          }
+          // return $others[$i];
         }
-        $this->response['data'] = $result;
+        $i++;
       }
     }
-    return $this->response();
   }
 
   public function retrieveAll(Request $request)
