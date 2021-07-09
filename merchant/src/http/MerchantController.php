@@ -128,7 +128,6 @@ class MerchantController extends APIController
               ->where('T2.price', '>=', $condition['price_range']['min'])
               ->where('T2.price', '<=', $condition['price_range']['max'])
               ->where('T1.merchant_id', '=', $value['id'])->get();
-            $others[$i]['products'] = $products;
             $others[$i]['account'] = $this->retrieveAccountDetails($value['account_id']);
             $others[$i]['rating'] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload('merchant_id', $value['id']);
             $others[$i]['featured_photos'] = app($this->imageClass)->retrieveFeaturedPhotos('account_id', $value['account_id'], 'category', 'featured-photo');
