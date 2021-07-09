@@ -128,11 +128,15 @@ class MerchantController extends APIController
               ->where('T2.price', '>=', $condition['price_range']['min'])
               ->where('T2.price', '<=', $condition['price_range']['max'])
               ->where('T1.merchant_id', '=', $value['id'])->get();
+            if(sizeof($value) > 0){
+              return $others[$i];
+            }else{
+              return $others[$i];
+            }
             $others[$i]['account'] = $this->retrieveAccountDetails($value['account_id']);
             $others[$i]['rating'] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload('merchant_id', $value['id']);
             $others[$i]['featured_photos'] = app($this->imageClass)->retrieveFeaturedPhotos('account_id', $value['account_id'], 'category', 'featured-photo');
-  
-            return $others[$i];
+
           }
         }else{
           $distance = app($this->locationClass)->getLocationDistanceByMerchant(json_decode($synqt[0]['location_id']), json_decode($value['address']));
