@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\DB;
 
 class MerchantController extends APIController
 {
+  public $messengerGroupClass = 'Increment\Messenger\Http\MessengerGroupController';
+  public $locationClass = 'Increment\Imarket\Location\Http\LocationController';
+  public $imageClass = 'Increment\Common\Image\Http\ImageController';
+
   function __construct()
   {
     $this->model = new Merchant();
@@ -20,8 +24,6 @@ class MerchantController extends APIController
       'name', 'address', 'prefix', 'logo', 'website', 'email', 'schedule', 'website', 'addition_informations'
     );
   }
-  public $locationClass = 'Increment\Imarket\Location\Http\LocationController';
-  public $imageClass = 'Increment\Common\Image\Http\ImageController';
 
   public function create(Request $request)
   {
@@ -98,17 +100,31 @@ class MerchantController extends APIController
         $others = Merchant::limit($data['limit'])->offset($data['offset'])->get();
         $m = 0;
         foreach ($others as $merchant) {
-          $response = $this->manageResultMerchant($condition['cuisine'][$a], $merchant, $condition, $synqt);
-          if ($response !== null) {
-            if(!in_array($response, $res)){
-              array_push($res, $response);
+          $sched = $merchant['schedule'];
+          $synqtSched = Carbon::parse($synqt[0]['date'])->format('l');
+          if (str_contains($sched, $synqtSched)) {
+            $response = $this->manageResultMerchant($condition['cuisine'][$a], $merchant, $condition, $synqt);
+            if ($response !== null) {
+              if (!in_array($response, $res)) {
+                array_push($res, $response);
+              }
             }
           }
           $m++;
         }
         $a++;
       }
-      $this->response['data'] = $res;
+      if(sizeof($res) > 0){
+        $this->response['data'] = $res;
+        $this->response['error'] = null;
+      }else{
+        Synqt::where('id', '=', $data['synqt_id'])->update(array(
+          'deleted_at' => Carbon::now()
+        ));
+        app($this->messengerGroupClass)->deleteByParams('payload', $data['synqt_id']);
+        $this->response['data'] = [];
+        $this->response['error'] = 'No merchant has found';
+      }
     }
     return $this->response();
   }
@@ -117,7 +133,7 @@ class MerchantController extends APIController
   {
     if ($merchant['addition_informations'] !== null) {
       $merchant['addition_informations'] = (array)json_decode($merchant['addition_informations']);
-      if (str_contains($merchant['addition_informations']['cuisine'][0], $key)) {
+      if (in_array($key, $merchant['addition_informations']['cuisine'])) {
         $distance = app($this->locationClass)->getLocationDistanceByMerchant(json_decode($synqt[0]['location_id']), json_decode($merchant['address']));
         $totalDistance = preg_replace('/[^0-9.]+/', '', $distance);
         if ($totalDistance <= $condition['radius']) {
@@ -126,12 +142,10 @@ class MerchantController extends APIController
             ->where('T2.price', '>=', $condition['price_range']['min'])
             ->where('T2.price', '<=', $condition['price_range']['max'])
             ->where('T1.merchant_id', '=', $merchant['id'])->get();
-          // $others[$i]['account'] = $this->retrieveAccountDetails($value['account_id']);
-          // $others[$i]['rating'] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload('merchant_id', $value['id']);
-          // $others[$i]['featured_photos'] = app($this->imageClass)->retrieveFeaturedPhotos('account_id', $value['account_id'], 'category', 'featured-photo');
+          $merchant['account'] = $this->retrieveAccountDetails($merchant['account_id']);
+          $merchant['rating'] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload('merchant_id', $merchant['id']);
+          $merchant['featured_photos'] = app($this->imageClass)->retrieveFeaturedPhotos('account_id', $merchant['account_id'], 'category', 'featured-photo');
           if (sizeof($products) > 0) {
-            return $merchant;
-          } else {
             return $merchant;
           }
         }
