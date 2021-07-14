@@ -100,7 +100,7 @@ class MerchantController extends APIController
         $others = Merchant::limit($data['limit'])->offset($data['offset'])->get();
         $m = 0;
         foreach ($others as $merchant) {
-          $sched = $merchant['schedule'];
+          $sched = (string)$merchant['schedule'];
           $synqtSched = Carbon::parse($synqt[0]['date'])->format('l');
           if (str_contains($sched, $synqtSched)) {
             $response = $this->manageResultMerchant($condition['cuisine'][$a], $merchant, $condition, $synqt);
