@@ -42,6 +42,7 @@ class ReservationController extends APIController
 			$result = Reservation::where($con[0]['column'], $con[0]['clause'], $con[0]['value'])
 				->where($con[1]['column'], $con[1]['clause'], $con[1]['value'])
 				->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])
+        ->select('id', 'datetime', 'account_id', 'payload_value', 'code', 'status')
 				->offset($data['offset'])->limit($data['limit'])
 				->orderBy(array_keys($data['sort'])[0], $data['sort'][array_keys($data['sort'])[0]])
 				->get();
@@ -50,11 +51,11 @@ class ReservationController extends APIController
 			$i = 0;
 			foreach ($result as $key) {
 				$result[$i]['reservee'] = $this->retrieveNameOnly($result[$i]['account_id']);
-				$result[$i]['synqt'] = app($this->synqtClass)->retrieveByParams('id', $result[$i]['payload_value']);
-				$result[$i]['merchant'] = app($this->merchantClass)->getByParams('id', $result[$i]['merchant_id']);
-				$result[$i]['distance'] = app($this->locationClass)->getLocationDistance('id', $result[$i]['synqt'][0]['location_id'], $result[$i]['merchant']['account_id']);
-				$result[$i]['total_super_likes'] = app($this->topChoiceClass)->countByParams('synqt_id', $result[$i]['payload_value']);
-				$result[$i]['rating'] = app($this->ratingClass)->getRatingByPayload('merchant_id', $result[$i]['merchant_id']);
+				// $result[$i]['synqt'] = app($this->synqtClass)->retrieveByParams('id', $result[$i]['payload_value']);
+				// $result[$i]['merchant'] = app($this->merchantClass)->getByParams('id', $result[$i]['merchant_id']);
+				// $result[$i]['distance'] = app($this->locationClass)->getLocationDistance('id', $result[$i]['synqt'][0]['location_id'], $result[$i]['merchant']['account_id']);
+				// $result[$i]['total_super_likes'] = app($this->topChoiceClass)->countByParams('synqt_id', $result[$i]['payload_value';
+				// $result[$i]['rating'] = app($this->ratingClass)->getRatingByPayload('merchant_id', $result[$i]['merchant_id']);
 				$result[$i]['date_time_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['datetime'])->copy()->tz($this->response['timezone'])->format('F j, Y H:i A');
 				$result[$i]['members'] = app($this->messengerGroupClass)->getMembersByParams('payload', $result[$i]['payload_value'], ['id', 'title']);
 				$i++;
@@ -95,7 +96,9 @@ class ReservationController extends APIController
 			foreach ($result as $value) {
 				$tempReserv = Reservation::where('payload_value', '=', $value['payload'])
 					->where($con[1]['column'], $con[1]['clause'], $con[1]['value'])
-					->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])->get();
+					->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])
+					->select('id', 'account_id', 'payload_value', 'merchant_id', 'datetime')
+					->get();
 				if(sizeof($tempReserv) > 0) {
 					array_push($this->temp, $tempReserv[0]);
 				}
@@ -106,10 +109,10 @@ class ReservationController extends APIController
 				$i = 0;
 				foreach ($res as $key) {
 					$res[$i]['reservee'] = $this->retrieveNameOnly($res[$i]['account_id']);
-					$res[$i]['synqt'] = app($this->synqtClass)->retrieveByParams('id', $res[$i]['payload_value']);
-					$res[$i]['merchant'] = app($this->merchantClass)->getByParams('id', $res[$i]['merchant_id']);
+					$res[$i]['synqt'] = app($this->synqtClass)->retrieveSynqtByParams('id', $res[$i]['payload_value']);
+					$res[$i]['merchant'] = app($this->merchantClass)->getMerchantByParams('id', $res[$i]['merchant_id']);
 					$res[$i]['distance'] = app($this->locationClass)->getLocationDistanceByMerchant($res[$i]['synqt'][0]['location_id'], json_decode($res[$i]['merchant']['address']));
-					$res[$i]['total_super_likes'] = app($this->topChoiceClass)->countByParams('synqt_id', $res[$i]['payload_value']);
+					$res[$i]['total_super_likes'] = app($this->topChoiceClass)->countByParams($res[$i]['payload_value'], $res[$i]['merchant_id']);
 					$res[$i]['rating'] = app($this->ratingClass)->getRatingByPayload('merchant_id', $res[$i]['merchant_id']);
 					$res[$i]['date_time_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $res[$i]['datetime'])->copy()->tz($this->response['timezone'])->format('F j, Y H:i A');
 					$res[$i]['members'] = app($this->messengerGroupClass)->getMembersByParams('payload', $res[$i]['payload_value'], ['id', 'title']);
