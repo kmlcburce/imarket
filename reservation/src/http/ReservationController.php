@@ -94,11 +94,20 @@ class ReservationController extends APIController
 		if (sizeof($result) > 0) {
 			$j=0;
 			foreach ($result as $value) {
-				$tempReserv = Reservation::where('payload_value', '=', $value['payload'])
+        if($con[1]['value'] == 'pending') {
+          $tempReserv = Reservation::where('payload_value', '=', $value['payload'])
 					->where($con[1]['column'], $con[1]['clause'], $con[1]['value'])
+          ->orWhere($con[1]['column'], $con[1]['clause'], 'accepted')
 					->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])
 					->select('id', 'account_id', 'payload_value', 'merchant_id', 'datetime')
 					->get();
+        } else {
+          $tempReserv = Reservation::where('payload_value', '=', $value['payload'])
+            ->where($con[1]['column'], $con[1]['clause'], $con[1]['value'])
+            ->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])
+            ->select('id', 'account_id', 'payload_value', 'merchant_id', 'datetime')
+            ->get();
+        }
 				if(sizeof($tempReserv) > 0) {
 					array_push($this->temp, $tempReserv[0]);
 				}
