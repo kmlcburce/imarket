@@ -56,7 +56,7 @@ class ReservationController extends APIController
 				// $result[$i]['distance'] = app($this->locationClass)->getLocationDistance('id', $result[$i]['synqt'][0]['location_id'], $result[$i]['merchant']['account_id']);
 				// $result[$i]['total_super_likes'] = app($this->topChoiceClass)->countByParams('synqt_id', $result[$i]['payload_value';
 				// $result[$i]['rating'] = app($this->ratingClass)->getRatingByPayload('merchant_id', $result[$i]['merchant_id']);
-				$result[$i]['date_time_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['datetime'])->copy()->tz($this->response['timezone'])->format('F j, Y H:i A');
+				$result[$i]['date_time_at_human'] = Carbon::createFromFormat('Y-m-d h:i:s', $result[$i]['datetime'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
 				$result[$i]['members'] = app($this->messengerGroupClass)->getMembersByParams('payload', $result[$i]['payload_value'], ['id', 'title']);
 				$i++;
 			}
@@ -98,7 +98,7 @@ class ReservationController extends APIController
         $tempReserv = Reservation::where('payload_value', '=', $value['payload'])
           ->where($con[1]['column'], $con[1]['clause'], $con[1]['value'])
           ->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])
-          ->select('id', 'account_id', 'payload_value', 'merchant_id', 'datetime')
+          ->select('id', 'account_id', 'payload_value', 'merchant_id', 'datetime', 'status')
           ->get();
 				if(sizeof($tempReserv) > 0) {
 					array_push($this->temp, $tempReserv[0]);
@@ -130,11 +130,11 @@ class ReservationController extends APIController
 		$data = $request->all();
 		$this->model = new Reservation();
 		$this->insertDB($data);
-		if ($this->response['data'] !== null) {
-			TopChoice::where('synqt_id', '=', $data['payload_value'])->update(array(
-				'deleted_at' => Carbon::now()
-			));
-		}
+		// if ($this->response['data'] !== null) {
+		// 	TopChoice::where('synqt_id', '=', $data['payload_value'])->update(array(
+		// 		'deleted_at' => Carbon::now()
+		// 	));
+		// }
 
 		return $this->response();
 	}
