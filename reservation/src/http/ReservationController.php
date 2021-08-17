@@ -42,7 +42,7 @@ class ReservationController extends APIController
 			$result = Reservation::where($con[0]['column'], $con[0]['clause'], $con[0]['value'])
 				->where($con[1]['column'], $con[1]['clause'], $con[1]['value'])
 				->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])
-        ->select('id', 'datetime', 'account_id', 'payload_value', 'code', 'status')
+				->select('id', 'datetime', 'account_id', 'payload_value', 'code', 'status')
 				->offset($data['offset'])->limit($data['limit'])
 				->orderBy(array_keys($data['sort'])[0], $data['sort'][array_keys($data['sort'])[0]])
 				->get();
@@ -82,8 +82,8 @@ class ReservationController extends APIController
 				->orderBy('T1.' . array_keys($data['sort'])[0], $data['sort'][array_keys($data['sort'])[0]])
 				->get();
 
-        $result = json_decode($result, true);
-        $result = array_unique($result, SORT_REGULAR);
+			$result = json_decode($result, true);
+			$result = array_unique($result, SORT_REGULAR);
 			// $result = Reservation::where($con[0]['column'], $con[0]['clause'], $con[0]['value'])
 			// 	->where($con[1]['column'], $con[1]['clause'], $con[1]['value'])
 			// 	->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])
@@ -93,14 +93,14 @@ class ReservationController extends APIController
 		}
 		$res = null;
 		if (sizeof($result) > 0) {
-			$j=0;
+			$j = 0;
 			foreach ($result as $value) {
-        $tempReserv = Reservation::where('payload_value', '=', $value['payload'])
-          ->where($con[1]['column'], $con[1]['clause'], $con[1]['value'])
-          ->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])
-          ->select('id', 'account_id', 'payload_value', 'merchant_id', 'datetime', 'status')
-          ->get();
-				if(sizeof($tempReserv) > 0) {
+				$tempReserv = Reservation::where('payload_value', '=', $value['payload'])
+					->where($con[1]['column'], $con[1]['clause'], $con[1]['value'])
+					->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])
+					->select('id', 'account_id', 'payload_value', 'merchant_id', 'datetime', 'status')
+					->get();
+				if (sizeof($tempReserv) > 0) {
 					array_push($this->temp, $tempReserv[0]);
 				}
 				$j++;
@@ -179,5 +179,53 @@ class ReservationController extends APIController
 		$this->response['data'] = $result;
 		// }
 		return $this->response();
+	}
+
+	public function retrieveBookings(Request $request)
+	{
+		$data = $request->all();
+		$con = $data['condition'];
+		$condition = array(
+			array('reservations.' . $con[0]['column'], $con[0]['clause'], $con[0]['value'])
+		);
+		if ($con[0]['column'] == 'email') {
+			$condition = array(
+				array('T2.' . $con[0]['column'], $con[0]['clause'], $con[0]['value'])
+			);
+		} else if ($con[0]['column'] == 'payload_value') {
+			$condition = array(
+				array('T3.title', $con[0]['clause'], $con[0]['value'])
+			);
+		}
+		$res = Reservation::leftJoin('accounts as T2', 'T2.id', '=', 'reservations.account_id')
+			->leftJoin('rooms as T3', 'T3.id', 'reservations.payload_value')
+			->where($condition)
+			->orderBy(array_keys($data['sort'])[0], array_values($data['sort'])[0])
+			->limit($data['limit'])
+			->offset($data['offset'])
+			->get(['reservations.*', 'T2.email', 'T3.title']);
+
+		$size = Reservation::leftJoin('accounts as T2', 'T2.id', '=', 'reservations.account_id')
+			->leftJoin('rooms as T3', 'T3.id', 'reservations.payload_value')
+			->where($condition)
+			->orderBy(array_keys($data['sort'])[0], array_values($data['sort'])[0])
+			->get(['reservations.*', 'T2.email', 'T3.title']);
+
+		$this->response['size'] = sizeOf($size);
+		$this->response['data'] = $res;
+		return $this->response();
+	}
+
+	public function retrieveTotalPreviousBookings(){
+		$currDate = Carbon::now()->toDateTimeString();
+		$res = Reservation::where('status', '=', 'verified')->where('created_at', '<', $currDate)->count();
+
+		return $res;
+	}
+
+	public function retrieveTotalUpcomingBookings(){
+		$currDate = Carbon::now()->toDateTimeString();
+		$res = Reservation::where('status', '=', 'verified')->where('check_in', '>=', $currDate)->count();
+		return $res;
 	}
 }
