@@ -17,6 +17,7 @@ class ReservationController extends APIController
 	public $messengerGroupClass = 'Increment\Messenger\Http\MessengerGroupController';
 	public $ratingClass = 'Increment\Common\Rating\Http\RatingController';
 	public $topChoiceClass = 'App\Http\Controllers\TopChoiceController';
+	public $roomController = 'App\Http\Controllers\RoomController';
 	public $locationClass = 'Increment\Imarket\Location\Http\LocationController';
 	public $emailClass = 'App\Http\Controllers\EmailController';
 	public $temp = array();
@@ -185,31 +186,44 @@ class ReservationController extends APIController
 	{
 		$data = $request->all();
 		$con = $data['condition'];
+		$sortBy = 'reservations.'.array_keys($data['sort'])[0];
 		$condition = array(
 			array('reservations.' . $con[0]['column'], $con[0]['clause'], $con[0]['value'])
 		);
 		if ($con[0]['column'] == 'email') {
+			$sortBy = 'T2.'.array_keys($data['sort'])[0];
 			$condition = array(
 				array('T2.' . $con[0]['column'], $con[0]['clause'], $con[0]['value'])
 			);
 		} else if ($con[0]['column'] == 'payload_value') {
+			$sortBy = 'T3.'.array_keys($data['sort'])[0];
 			$condition = array(
 				array('T3.title', $con[0]['clause'], $con[0]['value'])
 			);
 		}
 		$res = Reservation::leftJoin('accounts as T2', 'T2.id', '=', 'reservations.account_id')
 			->leftJoin('rooms as T3', 'T3.id', 'reservations.payload_value')
+			->leftJoin('account_informations as T4', 'T4.account_id', '=', 'T2.id')
 			->where($condition)
-			->orderBy(array_keys($data['sort'])[0], array_values($data['sort'])[0])
+			->orderBy($sortBy, array_values($data['sort'])[0])
 			->limit($data['limit'])
 			->offset($data['offset'])
-			->get(['reservations.*', 'T2.email', 'T3.title']);
+			->get(['reservations.*', 'T2.email', 'T3.title', 'T3.price']);
 
 		$size = Reservation::leftJoin('accounts as T2', 'T2.id', '=', 'reservations.account_id')
 			->leftJoin('rooms as T3', 'T3.id', 'reservations.payload_value')
+			->leftJoin('account_informations as T4', 'T4.account_id', '=', 'T2.id')
 			->where($condition)
-			->orderBy(array_keys($data['sort'])[0], array_values($data['sort'])[0])
-			->get(['reservations.*', 'T2.email', 'T3.title']);
+			->orderBy($sortBy, array_values($data['sort'])[0])
+			->get();
+		
+		for ($i=0; $i <= sizeof($res)-1; $i++) { 
+			$item = $res[$i];
+			$res[$i]['details'] = json_decode($item['details']);
+			$res[$i]['check_in'] = Carbon::createFromFormat('Y-m-d H:i:s', $item['check_in'])->copy()->tz($this->response['timezone'])->format('F j, Y');
+			$res[$i]['check_out'] = Carbon::createFromFormat('Y-m-d H:i:s', $item['check_out'])->copy()->tz($this->response['timezone'])->format('F j, Y');
+			$res[$i]['name'] = $this->retrieveNameOnly($item['account']);
+		}
 
 		$this->response['size'] = sizeOf($size);
 		$this->response['data'] = $res;
@@ -227,5 +241,23 @@ class ReservationController extends APIController
 		$currDate = Carbon::now()->toDateTimeString();
 		$res = Reservation::where('status', '=', 'verified')->where('check_in', '>=', $currDate)->count();
 		return $res;
+	}
+
+	public function retrieveTotalReservationsByAccount($accountId){
+		$res = Reservation::where('account_id', '=', $accountId)->count();
+		return $res;
+	}
+
+	public function retrieveTotalSpentByAcccount($accountId){
+		$res = Reservation::where('account_id', '=', $accountId)->get(['payload_value']);
+		$total = 0;
+		for ($i=0; $i <= sizeof($res)-1; $i++) { 
+			$item = $res[$i];
+			$rooms = app($this->roomController)->retrieveTotalPriceById($accountId, 'id', $item['payload_value'], ['price']);
+			if(sizeof($rooms) > 0){
+				$total += $rooms[0]['price'];
+			}
+		}
+		return $total;
 	}
 }
