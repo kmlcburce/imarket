@@ -4,7 +4,6 @@ namespace Increment\Imarket\Reservation\Http;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
-use App\TopChoice;
 use Increment\Imarket\Reservation\Models\Reservation;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -79,50 +78,80 @@ class ReservationController extends APIController
 			$result = DB::table('messenger_members as T1')
 				->leftJoin('messenger_groups as T2', 'T1.messenger_group_id', '=', 'T2.id')
 				->where('T1.' . $con[0]['column'], $con[0]['clause'], $con[0]['value'])
-				->offset($data['offset'])->limit($data['limit'])
+        ->where('T2.deleted_at', '=', null)
+        ->where('T1.deleted_at', '=', null)
 				->orderBy('T1.' . array_keys($data['sort'])[0], $data['sort'][array_keys($data['sort'])[0]])
 				->get();
 
 			$result = json_decode($result, true);
 			$result = array_unique($result, SORT_REGULAR);
-			// $result = Reservation::where($con[0]['column'], $con[0]['clause'], $con[0]['value'])
-			// 	->where($con[1]['column'], $con[1]['clause'], $con[1]['value'])
-			// 	->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])
-			// 	->offset($data['offset'])->limit($data['limit'])
-			// 	->orderBy(array_keys($data['sort'])[0], $data['sort'][array_keys($data['sort'])[0]])
-			// 	->get();
 		}
-		$res = null;
-		if (sizeof($result) > 0) {
-			$j = 0;
-			foreach ($result as $value) {
-				$tempReserv = Reservation::where('payload_value', '=', $value['payload'])
-					->where($con[1]['column'], $con[1]['clause'], $con[1]['value'])
-					->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])
-					->select('id', 'account_id', 'payload_value', 'merchant_id', 'datetime', 'status')
-					->get();
-				if (sizeof($tempReserv) > 0) {
-					array_push($this->temp, $tempReserv[0]);
-				}
-				$j++;
-			}
-			$res = $this->temp;
-			if (sizeof($res) > 0) {
-				$i = 0;
-				foreach ($res as $key) {
-					$res[$i]['reservee'] = $this->retrieveNameOnly($res[$i]['account_id']);
-					$res[$i]['synqt'] = app($this->synqtClass)->retrieveSynqtByParams('id', $res[$i]['payload_value']);
-					$res[$i]['merchant'] = app($this->merchantClass)->getMerchantByParams('id', $res[$i]['merchant_id']);
-					$res[$i]['distance'] = app($this->locationClass)->getLocationDistanceByMerchant($res[$i]['synqt'][0]['location_id'], json_decode($res[$i]['merchant']['address']));
-					$res[$i]['total_super_likes'] = app($this->topChoiceClass)->countByParams($res[$i]['payload_value'], $res[$i]['merchant_id']);
-					$res[$i]['rating'] = app($this->ratingClass)->getRatingByPayload('merchant_id', $res[$i]['merchant_id']);
-					$res[$i]['date_time_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $res[$i]['datetime'])->copy()->tz($this->response['timezone'])->format('F j, Y H:i A');
-					$res[$i]['members'] = app($this->messengerGroupClass)->getMembersByParams('payload', $res[$i]['payload_value'], ['id', 'title']);
-					$i++;
-				}
-				$this->response['data'] = $res;
-			}
-		}
+		$res = array();
+    if (sizeof($result) > 0) {
+      $j = 0;
+      foreach ($result as $value) {
+        $tempReserv = Reservation::where('payload_value', '=', $value['payload'])
+          ->where($con[1]['column'], $con[1]['clause'], $con[1]['value'])
+          ->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])
+          ->select('id', 'account_id', 'payload_value', 'merchant_id', 'datetime', 'status')
+          ->get();
+        if (sizeof($tempReserv) > 0) {
+          foreach ($tempReserv as $reserve) {
+            if( sizeof($this->temp) < $data['limit']) {
+              array_push($this->temp, $reserve);
+            }
+          }
+        }
+        $j++;
+      }
+      $res = $this->temp;
+      if (sizeof($res) > 0) {
+        $i = 0;
+        foreach ($res as $key) {
+          $res[$i]['reservee'] = $this->retrieveNameOnly($res[$i]['account_id']);
+          $res[$i]['synqt'] = app($this->synqtClass)->retrieveSynqtByParams('id', $res[$i]['payload_value']);
+          $res[$i]['merchant'] = app($this->merchantClass)->getMerchantByParams('id', $res[$i]['merchant_id']);
+          $res[$i]['distance'] = app($this->locationClass)->getLocationDistanceByMerchant($res[$i]['synqt'][0]['location_id'], json_decode($res[$i]['merchant']['address']));
+          $res[$i]['total_super_likes'] = app($this->topChoiceClass)->countByParams($res[$i]['payload_value'], $res[$i]['merchant_id']);
+          $res[$i]['rating'] = app($this->ratingClass)->getRatingByPayload('merchant_id', $res[$i]['merchant_id']);
+          $res[$i]['date_time_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $res[$i]['datetime'])->copy()->tz($this->response['timezone'])->format('F j, Y H:i A');
+          $res[$i]['members'] = app($this->messengerGroupClass)->getMembersByParams('payload', $res[$i]['payload_value'], ['id', 'title']);
+          $i++;
+        }
+        $this->response['data'] = $res;
+      }
+    }
+
+		// if (sizeof($result) > 0) {
+		// 	$j = 0;
+		// 	foreach ($result as $value) {
+		// 		$tempReserv = Reservation::where('payload_value', '=', $value['payload'])
+		// 			->where($con[1]['column'], $con[1]['clause'], $con[1]['value'])
+		// 			->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])
+		// 			->select('id', 'account_id', 'payload_value', 'merchant_id', 'datetime', 'status')
+		// 			->get();
+		// 		if (sizeof($tempReserv) > 0) {
+		// 			array_push($this->temp, $tempReserv[0]);
+		// 		}
+		// 		$j++;
+		// 	}
+		// 	$res = $this->temp;
+		// 	if (sizeof($res) > 0) {
+		// 		$i = 0;
+		// 		foreach ($res as $key) {
+		// 			$res[$i]['reservee'] = $this->retrieveNameOnly($res[$i]['account_id']);
+		// 			$res[$i]['synqt'] = app($this->synqtClass)->retrieveSynqtByParams('id', $res[$i]['payload_value']);
+		// 			$res[$i]['merchant'] = app($this->merchantClass)->getMerchantByParams('id', $res[$i]['merchant_id']);
+		// 			$res[$i]['distance'] = app($this->locationClass)->getLocationDistanceByMerchant($res[$i]['synqt'][0]['location_id'], json_decode($res[$i]['merchant']['address']));
+		// 			$res[$i]['total_super_likes'] = app($this->topChoiceClass)->countByParams($res[$i]['payload_value'], $res[$i]['merchant_id']);
+		// 			$res[$i]['rating'] = app($this->ratingClass)->getRatingByPayload('merchant_id', $res[$i]['merchant_id']);
+		// 			$res[$i]['date_time_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $res[$i]['datetime'])->copy()->tz($this->response['timezone'])->format('F j, Y H:i A');
+		// 			$res[$i]['members'] = app($this->messengerGroupClass)->getMembersByParams('payload', $res[$i]['payload_value'], ['id', 'title']);
+		// 			$i++;
+		// 		}
+		// 		$this->response['data'] = $res;
+		// 	}
+		// }
 		return $this->response();
 	}
 
@@ -131,12 +160,6 @@ class ReservationController extends APIController
 		$data = $request->all();
 		$this->model = new Reservation();
 		$this->insertDB($data);
-		// if ($this->response['data'] !== null) {
-		// 	TopChoice::where('synqt_id', '=', $data['payload_value'])->update(array(
-		// 		'deleted_at' => Carbon::now()
-		// 	));
-		// }
-
 		return $this->response();
 	}
 
