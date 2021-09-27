@@ -264,14 +264,14 @@ class LocationController extends APIController
 
     public function getPartnersInLocation(Request $request){
       $data = $request->all();
-      $results = Location::where('locality', 'like', '%'.$data['locality'].'%')->get();
+      $results = Location::where('locality', 'like', '%'.$data['locality'].'%')->where('code', '!', null)->get();
 
       if($results && sizeof($results) > 0){
         $this->response['data'] = sizeof($results);
       }else{
         // check via distance
       }
-      
+
       return $this->response();
     }
 
