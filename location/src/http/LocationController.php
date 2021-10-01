@@ -267,11 +267,19 @@ class LocationController extends APIController
       $results = Location::where('locality', 'like', '%'.$data['locality'].'%')->where('code', '!=', null)->get();
 
       if($results && sizeof($results) > 0){
-        $this->response['data'] = $results;
+        $size = sizeof($results);
+        $this->response['data'] = array(
+          'size' => $size,
+          'code' => $size > 0 ? $results[0]['code'] : null
+        );
       }else{
         // check via distance
         $results = Location::where('code', '!=', null)->where('locality', '=', $data['locality'])->get();
-        $this->response['data'] = $results;
+        $size = sizeof($results);
+        $this->response['data'] = array(
+          'size' => $size,
+          'code' => $size > 0 ? $results[0]['code'] : null
+        );
       }
 
       return $this->response();
